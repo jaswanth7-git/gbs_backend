@@ -1,0 +1,93 @@
+const db = require("../models");
+const Category = db.category;
+const asyncHandler = require("express-async-handler");
+const _ = require("lodash");
+
+const addCategory = asyncHandler(async (req, res, next) => {
+  const { CategoryName, Quantity, Branch } = req.body;
+  if (!CategoryName || !Quantity || !Branch) {
+    res.status(400);
+    next(new Error("All fields are mandatory!"));
+  }
+
+  const categoryBean = {
+    CategoryName: CategoryName,
+    Quantity: Quantity,
+    Branch: Branch,
+    ActiveStatus: 1,
+  };
+
+  const category = await Category.create(categoryBean);
+  res.status(201).json(category);
+});
+
+const getAllCategories = asyncHandler(async (req, res, next) => {
+  const condition = { ActiveStatus: 1 };
+  const categories = await Category.findAll({ where: condition });
+  if (_.isEmpty(categories)) {
+    res.status(404).json({ message: "No Entries found." });
+  }
+  res.status(200).json(categories);
+});
+
+const getCategory = asyncHandler(async (req, res, next) => {
+  const categoryName = req.params.category;
+  const condition = categoryName
+    ? { CategoryName: categoryName, ActiveStatus: 1 }
+    : null;
+  if (condition === null) {
+    res.status(400);
+    next(new Error("Please Mention Correct CategoryName"));
+  }
+
+  const category = await Category.findAll({ where: condition });
+  if (category === null) {
+    res.status(404);
+    next(new Error("Entry Not Found for the given Category..."));
+  }
+  res.status(200).json(category);
+});
+
+const updateCategory = asyncHandler(async (req, res, next) => {
+  const categoryName = req.params.category;
+  const condition = categoryName ? { CategoryName: categoryName } : null;
+  if (condition === null) {
+    res.status(400);
+    next(new Error("Please Mention Correct CategoryName"));
+  }
+  const category = await Category.update(req.body, { where: condition });
+  if (category === null) {
+    res.status(404);
+    next(new Error("Entry Not Found for the given Category To Update ..."));
+  }
+  res.status(200).json({ message: "Successfully Updated" });
+});
+
+const deleteCategory = asyncHandler(async (req, res, next) => {
+  const categoryName = req.params.category;
+  const condition = categoryName ? { CategoryName: categoryName } : null;
+  if (condition === null) {
+    res.status(400);
+    next(new Error("Please Mention Correct CategoryName"));
+  }
+
+  // Update the category's ActiveStatus to 0
+  await Category.update({ ActiveStatus: 0 }, { where: condition });
+
+  res.status(200).json({ message: "Successfully Deleted" });
+});
+
+const deleteAll = asyncHandler(async (req, res, next) => {
+  await Category.destroy({ where: {} });
+
+  res.status(200).json({ message: "Table truncated successfully." });
+});
+
+module.exports = {
+  deleteAll,
+  deleteCategory,
+  updateCategory,
+  getAllCategories,
+  addCategory,
+  getCategory,
+};
