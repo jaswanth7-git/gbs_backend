@@ -17,6 +17,12 @@ const addCategory = asyncHandler(async (req, res, next) => {
     ActiveStatus: 1,
   };
 
+  const exists = await Category.findOne({ where: categoryBean });
+  if (exists !== null) {
+    res.status(400);
+    throw new Error("Entry Exists With Same Data");
+  }
+
   const category = await Category.create(categoryBean);
   res.status(201).json(category);
 });
