@@ -38,18 +38,18 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 //GET Users By Branch
 const getUserByBranch = asyncHandler(async (req, res) => {
-  const branch = req.params.branch;
-  const condition = branch ? { Branch: branch } : null;
+  const {userName,password,Branch} = req.body;
+  const condition = Branch && password && userName ? { userName: userName,password: password,Branch: Branch } : null;
   if (condition === null) {
     res.status(400);
-    next(new Error("BranchName cannot be null"));
+    next(new Error("userName,password,BranchName cannot be null"));
   }
-  const users = await User.findAll({ where: condition });
+  const user = await User.findOne({ where: condition });
   if (_.isEmpty(users)) {
     res.status(404);
     throw new Error("No Entries Found For The Given Branch.");
   }
-  res.status(200).json(users);
+  res.status(200).json({status : "SUCCESS", Role : user.Role});
 });
 
 module.exports = { addUser, getAllUsers, getUserByBranch };
