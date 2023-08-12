@@ -7,6 +7,6 @@ const router = require("express").Router();
 
 //routes
 router.route("/").post(addUser);
-router.route("/:branch").get(getUserByBranch);
+router.route("/:branch").post(getUserByBranch);
 
 module.exports = router;
