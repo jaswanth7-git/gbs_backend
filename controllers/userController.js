@@ -28,7 +28,7 @@ const addUser = asyncHandler(async (req, res) => {
 });
 
 //GET Users By Branch
-const getUserByBranch = asyncHandler(async (req, res) => {
+const getUserByBranch = asyncHandler(async (req, res,next) => {
   const branch = req.params.branch ? req.params.branch : null;
   if(branch==null){
     res.status(400);
