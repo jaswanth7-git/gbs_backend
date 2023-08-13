@@ -56,17 +56,27 @@ const getCategory = asyncHandler(async (req, res, next) => {
 
 const updateCategory = asyncHandler(async (req, res, next) => {
   const categoryName = req.params.category;
-  const condition = categoryName ? { CategoryName: categoryName } : null;
+  const condition = categoryName
+    ? { CategoryName: categoryName, ActiveStatus: 1 }
+    : null;
   if (condition === null) {
     res.status(400);
     next(new Error("Please Mention Correct CategoryName"));
   }
-  const category = await Category.update(req.body, { where: condition });
+  const category = await Category.findOne({ where: condition });
   if (category === null) {
+    res.status(404);
+    next(new Error("Entry Not Found for the given Category..."));
+  }
+  const [count, [updatedCategory]] = await Category.update(req.body, {
+    where: condition,
+    returning: true, // Set to true to return the updated record
+  });
+  if (count === 0) {
     res.status(404);
     next(new Error("Entry Not Found for the given Category To Update ..."));
   }
-  res.status(200).json({ message: "Successfully Updated" });
+  res.status(200).json(updatedCategory);
 });
 
 const deleteCategory = asyncHandler(async (req, res, next) => {
@@ -76,7 +86,11 @@ const deleteCategory = asyncHandler(async (req, res, next) => {
     res.status(400);
     next(new Error("Please Mention Correct CategoryName"));
   }
-
+  const category = await Category.findOne({ where: condition });
+  if (category === null) {
+    res.status(404);
+    next(new Error("Entry Not Found for the given Category..."));
+  }
   // Update the category's ActiveStatus to 0
   await Category.update({ ActiveStatus: 0 }, { where: condition });
 
@@ -85,7 +99,6 @@ const deleteCategory = asyncHandler(async (req, res, next) => {
 
 const deleteAll = asyncHandler(async (req, res, next) => {
   await Category.destroy({ where: {} });
-
   res.status(200).json({ message: "Table truncated successfully." });
 });
 
