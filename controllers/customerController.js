@@ -2,7 +2,6 @@ const db = require("../models");
 const asyncHandler = require("express-async-handler");
 const Customer = db.customer;
 const _ = require("lodash");
-const { Op } = require("sequelize");
 
 //Add Customer
 const addCustomer = asyncHandler(async (req, res) => {
@@ -12,15 +11,21 @@ const addCustomer = asyncHandler(async (req, res) => {
     throw new Error("All fields are mandatory!");
   }
 
-  const customer = Customer.create({
-    CustomerName,
-    Aadhar,
-    Pan_Card,
-    Email,
-    Address,
-    Phone,
-  });
+  const customerBean = {
+    CustomerName: CustomerName,
+    Aadhar: Aadhar,
+    Pan_Card: Pan_Card,
+    Email: Email,
+    Address: Address,
+    Phone: Phone,
+  };
 
+  const existingCustomer = await Customer.findOne({ where: customerBean });
+  if (existingCustomer) {
+    res.status(406);
+    throw new Error("Customer Exists with Same Details");
+  }
+  const customer = await Customer.create(customerBean);
   res.status(200).json(customer);
 });
 
@@ -82,9 +87,19 @@ const deleteCustomer = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Deleted Successfully" });
 });
 
+const getAll = asyncHandler(async (req, res) => {
+  const customers = await Customer.findAll();
+  if (_.isEmpty(customers)) {
+    res.status(404);
+    throw new Error("Customers Table Is Empty");
+  }
+  res.status(200).json(customers);
+});
+
 module.exports = {
   addCustomer,
   getCustomerByName,
   deleteCustomer,
   updateCustomer,
+  getAll
 };

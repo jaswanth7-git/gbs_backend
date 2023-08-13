@@ -15,6 +15,12 @@ const errorHandler = (err, req, res, next) => {
         message: err.message,
         stackTrace: err.stack,
       });
+    case constants.CONFLICT:
+      res.json({
+        title: "Conflict",
+        message: err.message,
+        stackTrace: err.stack,
+      });
     case constants.UNAUTHORIZED:
       res.json({
         title: "Unauthorized",
