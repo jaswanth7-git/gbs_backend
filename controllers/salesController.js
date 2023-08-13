@@ -14,11 +14,18 @@ const addSales = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("StateCode Cannot Be null!");
   }
-  const sales = await Sales.create({
+  const toBeSaved = {
     StateCode: req.body.StateCode,
     CustomerID: customer.CustomerID,
     ProductID: product.ProductID,
-  });
+  };
+  const existingSales = await Sales.findOne({ where: toBeSaved });
+  if (existingSales != null) {
+    res.status(409);
+    throw new Error("Already Exists wth Same Data");
+  }
+
+  const sales = await Sales.create(toBeSaved);
 
   const salesBean = {
     CustomerName: customer.CustomerName,
@@ -131,4 +138,4 @@ async function getProductByID(sale, res) {
   return product;
 }
 
-module.exports = { addSales,getSalesByCustomerName };
+module.exports = { addSales, getSalesByCustomerName };
