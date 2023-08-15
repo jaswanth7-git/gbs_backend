@@ -205,6 +205,28 @@ const deleteAll = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Table truncated successfully." });
 });
 
+//@desc GET Products By BarCode
+//@route GET /api/products/BarCode
+//@access private
+const getProductByBarcode = asyncHandler(async (req, res) => {
+  const barCode = req.params.barCode;
+  const condition = barCode
+    ? {
+        BarCode: barCode,
+      }
+    : null;
+  if (condition == null) {
+    res.status(400);
+    throw new Error("Please Mention Correct HSNCode");
+  }
+  const product = await Product.findOne({ where: condition });
+  if (product == null) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+  res.status(200).json(product);
+});
+
 module.exports = {
   getProducts,
   addProduct,
@@ -212,4 +234,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   deleteAll,
+  getProductByBarcode,
 };
