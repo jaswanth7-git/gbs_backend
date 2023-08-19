@@ -16,6 +16,6 @@ router.route("/:category").post(addProduct);
 router.route("/:HSNCode").put(updateProduct);
 router.route("/").delete(deleteAll);
 router.route("/delete/:HSNCode").put(deleteProduct);
-router.route("/:barCode").get(getProductByBarcode);
+router.route("/barcode/:barCode").get(getProductByBarcode);
 
 module.exports = router;

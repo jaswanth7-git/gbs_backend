@@ -213,6 +213,7 @@ const getProductByBarcode = asyncHandler(async (req, res) => {
   const condition = barCode
     ? {
         BarCode: barCode,
+        ActiveStatus: 1 
       }
     : null;
   if (condition == null) {
