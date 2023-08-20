@@ -17,5 +17,4 @@ router.route("/:HSNCode/:HUID").put(updateProduct);
 router.route("/").delete(deleteAll);
 router.route("/delete/:HSNCode/:HUID").put(deleteProduct);
 router.route("/:barCode").get(getProductByBarcode);
-
 module.exports = router;

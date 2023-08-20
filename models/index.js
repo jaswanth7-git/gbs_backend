@@ -39,11 +39,6 @@ db.user = require("../models/user.js")(sequelize,DataTypes);
 db.customer = require("../models/customer.js")(sequelize,DataTypes);
 db.sales = require("../models/sales.js")(sequelize,DataTypes);
 
-db.sequelize.sync({ force: false })
-.then(() => {
-    console.log('yes re-sync done!')
-});
-
 db.category.hasMany(db.products, {
     foreignKey: 'CategoryID',
     as: 'products'
@@ -52,6 +47,21 @@ db.category.hasMany(db.products, {
 db.products.belongsTo(db.category, {
     foreignKey: 'CategoryID',
     as: 'category'
+});
+
+db.sales.belongsTo(db.products, {
+    foreignKey: 'ProductID',
+    as: 'product'
+  });
+
+  db.sales.belongsTo(db.customer, {
+    foreignKey: 'CustomerID',
+    as: 'customer'
+  });
+
+db.sequelize.sync({ force: false })
+.then(() => {
+    console.log('yes re-sync done!')
 });
 
 module.exports = db;
