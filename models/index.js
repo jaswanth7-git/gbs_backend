@@ -54,24 +54,4 @@ db.products.belongsTo(db.category, {
     as: 'category'
 });
 
-db.sales.hasOne(db.customer,{
-    foreignKey: 'CustomerID',
-    as: 'salesToCustomer'
-});
-
-db.sales.hasOne(db.products,{
-    foreignKey: 'ProductID',
-    as: 'salesToProduct'
-});
-
-db.products.belongsTo(db.sales,{
-    foreignKey: 'ProductID',
-    as: 'productToSales'
-});
-
-db.customer.belongsTo(db.sales,{
-    foreignKey: 'CustomerID',
-    as: 'customerToSales'
-})
-
 module.exports = db;

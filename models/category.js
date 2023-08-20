@@ -5,7 +5,13 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      CaratType: {
+        type: DataTypes.STRING(255),
+      },
       CategoryName: {
+        type: DataTypes.STRING(255),
+      },
+      SubCategoryName: {
         type: DataTypes.STRING(255),
       },
       Quantity: {

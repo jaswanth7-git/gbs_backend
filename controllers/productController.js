@@ -10,9 +10,15 @@ const { Op } = require("sequelize");
 //@access private
 const getProducts = asyncHandler(async (req, res) => {
   const categoryName = req.params.category;
-  const condition = categoryName
-    ? { CategoryName: categoryName, ActiveStatus: 1 }
-    : null;
+  const SubCategoryName = req.params.SubCategoryName;
+  const condition =
+    categoryName && SubCategoryName
+      ? {
+          CategoryName: categoryName,
+          SubCategoryName: SubCategoryName,
+          ActiveStatus: 1,
+        }
+      : null;
   if (condition === null) {
     res.status(400);
     throw new Error("Category cannot be null or Empty");
@@ -61,8 +67,14 @@ const getAllProducts = asyncHandler(async (req, res) => {
 const addProduct = asyncHandler(async (req, res) => {
   const categoryName = req.params.category;
   const branch = req.body.Branch;
+  const SubCategoryName = req.params.SubCategoryName;
   const condition = categoryName
-    ? { CategoryName: categoryName, ActiveStatus: 1, Branch: branch }
+    ? {
+        CategoryName: categoryName,
+        ActiveStatus: 1,
+        SubCategoryName: SubCategoryName,
+        Branch: branch,
+      }
     : null;
   if (condition === null) {
     res.status(404);
@@ -76,19 +88,27 @@ const addProduct = asyncHandler(async (req, res) => {
   const {
     ItemName_Description,
     HSNCode,
+    HUID,
+    TagName,
+    BarCode_Prefix,
     GrWeight_Grams,
     NetWeight_Grams,
     Rate_Per_Gram,
-    ValAdd_RsPs,
+    Making_Charge,
+    Making_Direct,
+    Wastage_Charge,
+    Wastage_Direct,
+    V_A,
+    Stone_Type,
+    Stone_Pieces_CTS,
     Stones_RsPs,
     Discount_RsPs,
     Amount_RsPs,
-    BarCode_path,
     BarCode,
     Branch,
   } = req.body;
   const existingProduct = await Product.findOne({
-    where: { HSNCode: HSNCode },
+    where: { HSNCode: HSNCode, HUID: HUID, ActiveStatus: 1 },
   });
   if (existingProduct) {
     res.status(409);
@@ -99,29 +119,45 @@ const addProduct = asyncHandler(async (req, res) => {
   if (
     ItemName_Description === undefined ||
     HSNCode === undefined ||
+    HUID === undefined ||
+    TagName === undefined ||
+    BarCode_Prefix === undefined ||
     GrWeight_Grams === undefined ||
     NetWeight_Grams === undefined ||
     Rate_Per_Gram === undefined ||
-    ValAdd_RsPs === undefined ||
+    Making_Charge === undefined ||
+    Making_Direct === undefined ||
+    Wastage_Charge === undefined ||
+    Wastage_Direct === undefined ||
+    V_A === undefined ||
+    Stone_Type === undefined ||
+    Stone_Pieces_CTS === undefined ||
     Stones_RsPs === undefined ||
     Discount_RsPs === undefined ||
     Amount_RsPs === undefined ||
-    BarCode_path === undefined ||
     BarCode === undefined ||
     Branch === undefined ||
     ItemName_Description.trim() === "" ||
     HSNCode.trim() === "" ||
-    BarCode_path.trim() === "" ||
+    HUID.trim() === "" ||
+    TagName.trim() === "" ||
+    BarCode_Prefix.trim() === "" ||
+    GrWeight_Grams.trim() === "" || isNaN(Number(GrWeight_Grams)) || 
+    NetWeight_Grams.trim() === "" || isNaN(Number(NetWeight_Grams)) ||
+    Rate_Per_Gram.trim() === "" || isNaN(Number(Rate_Per_Gram)) ||
+    Making_Charge.trim() === "" || isNaN(Number(Making_Charge)) ||
+    Making_Direct.trim() === "" || isNaN(Number(Making_Direct)) ||
+    Wastage_Charge.trim() === "" || isNaN(Number(Wastage_Charge)) ||
+    Wastage_Direct.trim() === "" || isNaN(Number(Wastage_Direct)) ||
+    V_A.trim() === "" || isNaN(Number(V_A)) ||
+    Stone_Type.trim() === "" ||
+    Stone_Pieces_CTS.trim() === "" || isNaN(Number(Stone_Pieces_CTS)) ||
+    Stones_RsPs.trim() === "" || isNaN(Number(Stones_RsPs)) ||
+    Discount_RsPs.trim() === "" || isNaN(Number(Discount_RsPs)) ||
+    Amount_RsPs.trim() === "" || isNaN(Number(Amount_RsPs)) ||
     BarCode.trim() === "" ||
-    Branch.trim() === "" ||
-    GrWeight_Grams < 0 || // Allow zero (0) value
-    NetWeight_Grams < 0 || // Allow zero (0) value
-    Rate_Per_Gram < 0 || // Allow zero (0) value
-    ValAdd_RsPs < 0 || // Allow zero (0) value
-    Stones_RsPs < 0 || // Allow zero (0) value
-    Discount_RsPs < 0 || // Allow zero (0) value
-    Amount_RsPs < 0 // Allow zero (0) value
-  ) {
+    Branch.trim() === ""
+) {
     res.status(400);
     throw new Error("All fields are mandatory!");
   }
@@ -129,14 +165,22 @@ const addProduct = asyncHandler(async (req, res) => {
   const productBean = {
     ItemName_Description: req.body.ItemName_Description,
     HSNCode: req.body.HSNCode,
+    HUID:HUID,
+    TagName:TagName,
+    BarCode_Prefix:BarCode_Prefix,
     GrWeight_Grams: req.body.GrWeight_Grams,
     NetWeight_Grams: req.body.NetWeight_Grams,
     Rate_Per_Gram: req.body.Rate_Per_Gram,
-    ValAdd_RsPs: req.body.ValAdd_RsPs,
+    Making_Charge:Making_Charge,
+    Making_Direct:Making_Direct,
+    Wastage_Charge:Wastage_Charge,
+    Wastage_Direct:Wastage_Direct,
+    V_A:V_A,
+    Stone_Type:Stone_Type,
+    Stone_Pieces_CTS:Stone_Pieces_CTS,
     Stones_RsPs: req.body.Stones_RsPs,
     Discount_RsPs: req.body.Discount_RsPs,
     Amount_RsPs: req.body.Amount_RsPs,
-    BarCode_path: req.body.BarCode_path,
     BarCode: req.body.BarCode,
     Branch: req.body.Branch,
     ActiveStatus: 1,
@@ -151,12 +195,12 @@ const addProduct = asyncHandler(async (req, res) => {
 //@route PUT /api/products/:HSNCode
 //@access private
 const updateProduct = asyncHandler(async (req, res) => {
-  const condition = req.params.HSNCode
-    ? { HSNCode: req.params.HSNCode, ActiveStatus: 1 }
+  const condition = req.params.HSNCode && req.params.HUID
+    ? { HSNCode: req.params.HSNCode, HUID:req.params.HUID ,ActiveStatus: 1 }
     : null;
   if (condition === null) {
     res.status(400);
-    next(new Error("Please Mention Correct HSNCode"));
+    next(new Error("Please Mention Correct HSNCode An HUID"));
   }
 
   // Check if the product exists
@@ -168,16 +212,23 @@ const updateProduct = asyncHandler(async (req, res) => {
     throw new Error("Product not found");
   }
 
-  await Product.update(req.body, { where: condition });
-  res.status(200).json({ message: "Successfully Updated" });
+  const [count, [updatedProduct]] = await Product.update(req.body, {
+    where: condition,
+    returning: true, // Set to true to return the updated record
+  });
+  if (count === 0) {
+    res.status(404);
+    next(new Error("Entry Not Found for the given Product HUID and HSNCode To Update ..."));
+  }
+  res.status(200).json(updatedProduct);
 });
 
 //@desc delete Products
 //@route PUT /api/products/:HSNCode
 //@access private
 const deleteProduct = asyncHandler(async (req, res) => {
-  const condition = req.params.HSNCode
-    ? { HSNCode: req.params.HSNCode, ActiveStatus: 1 }
+  const condition = req.params.HSNCode && req.params.HUID
+    ? { HSNCode: req.params.HSNCode,HUID:req.params.HUID, ActiveStatus: 1 }
     : null;
   if (condition === null) {
     res.status(400);
@@ -213,6 +264,7 @@ const getProductByBarcode = asyncHandler(async (req, res) => {
   const condition = barCode
     ? {
         BarCode: barCode,
+        ActiveStatus: 1
       }
     : null;
   if (condition == null) {

@@ -4,14 +4,17 @@ const asyncHandler = require("express-async-handler");
 const _ = require("lodash");
 
 const addCategory = asyncHandler(async (req, res, next) => {
-  const { CategoryName, Quantity, Branch } = req.body;
-  if (!CategoryName || !Quantity || !Branch) {
+  const { CaratType, CategoryName, SubCategoryName, Quantity, Branch } =
+    req.body;
+  if (!CategoryName || !Quantity || !Branch || !SubCategoryName || !CaratType) {
     res.status(400);
     next(new Error("All fields are mandatory!"));
   }
 
   const categoryBean = {
+    CaratType: CaratType,
     CategoryName: CategoryName,
+    SubCategoryName: SubCategoryName,
     Quantity: Quantity,
     Branch: Branch,
     ActiveStatus: 1,
@@ -38,9 +41,15 @@ const getAllCategories = asyncHandler(async (req, res, next) => {
 
 const getCategory = asyncHandler(async (req, res, next) => {
   const categoryName = req.params.category;
-  const condition = categoryName
-    ? { CategoryName: categoryName, ActiveStatus: 1 }
-    : null;
+  const SubCategoryName = req.params.SubCategoryName;
+  const condition =
+    categoryName && SubCategoryName
+      ? {
+          CategoryName: categoryName,
+          SubCategoryName: SubCategoryName,
+          ActiveStatus: 1,
+        }
+      : null;
   if (condition === null) {
     res.status(400);
     next(new Error("Please Mention Correct CategoryName"));
@@ -56,9 +65,15 @@ const getCategory = asyncHandler(async (req, res, next) => {
 
 const updateCategory = asyncHandler(async (req, res, next) => {
   const categoryName = req.params.category;
-  const condition = categoryName
-    ? { CategoryName: categoryName, ActiveStatus: 1 }
-    : null;
+  const SubCategoryName = req.params.SubCategoryName;
+  const condition =
+    categoryName && SubCategoryName
+      ? {
+          CategoryName: categoryName,
+          SubCategoryName: SubCategoryName,
+          ActiveStatus: 1,
+        }
+      : null;
   if (condition === null) {
     res.status(400);
     next(new Error("Please Mention Correct CategoryName"));
@@ -81,7 +96,15 @@ const updateCategory = asyncHandler(async (req, res, next) => {
 
 const deleteCategory = asyncHandler(async (req, res, next) => {
   const categoryName = req.params.category;
-  const condition = categoryName ? { CategoryName: categoryName } : null;
+  const SubCategoryName = req.params.SubCategoryName;
+  const condition =
+    categoryName && SubCategoryName
+      ? {
+          CategoryName: categoryName,
+          SubCategoryName: SubCategoryName,
+          ActiveStatus: 1,
+        }
+      : null;
   if (condition === null) {
     res.status(400);
     next(new Error("Please Mention Correct CategoryName"));

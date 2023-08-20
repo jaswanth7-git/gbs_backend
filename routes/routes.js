@@ -10,12 +10,12 @@ const {
 } = require("../controllers/productController");
 
 // For Products
-router.route("/:category").get(getProducts);
+router.route("/:category/:SubCategoryName").get(getProducts);
 router.route("/").get(getAllProducts);
-router.route("/:category").post(addProduct);
-router.route("/:HSNCode").put(updateProduct);
+router.route("/:category/:SubCategoryName").post(addProduct);
+router.route("/:HSNCode/:HUID").put(updateProduct);
 router.route("/").delete(deleteAll);
-router.route("/delete/:HSNCode").put(deleteProduct);
+router.route("/delete/:HSNCode/:HUID").put(deleteProduct);
 router.route("/:barCode").get(getProductByBarcode);
 
 module.exports = router;
