@@ -1,141 +1,157 @@
 const db = require("../models");
-const Customer = db.customer;
 const Sales = db.sales;
-const Product = db.products;
-const Category = db.category;
 const asyncHandler = require("express-async-handler");
 const _ = require("lodash");
 
 const addSales = asyncHandler(async (req, res) => {
-  const customer = await getCustomer(req, res);
-  const product = await getProduct(req, res);
-  const category = await getCategory(product, res);
-  if (!req.body.StateCode) {
-    res.status(400);
-    throw new Error("StateCode Cannot Be null!");
-  }
-  const toBeSaved = {
-    StateCode: req.body.StateCode,
-    CustomerID: customer.CustomerID,
-    ProductID: product.ProductID,
-  };
-  const existingSales = await Sales.findOne({ where: toBeSaved });
-  if (existingSales != null) {
-    res.status(409);
-    throw new Error("Already Exists wth Same Data");
+  const salesBean = checkRequestBodyAndPrepareBean(req, res);
+
+  const existingSalesEntry = await Sales.findOne({ where: salesBean });
+  if (existingSalesEntry != null) {
+    res.status(406);
+    throw new Error("Already Exists with same Data Try Again ");
   }
 
-  const sales = await Sales.create(toBeSaved);
+  const sales = await Sales.create(salesBean);
+  res.status(201).json(sales);
+});
+
+function checkRequestBodyAndPrepareBean(req, res) {
+  const {
+    CustomerName,
+    Aadhar,
+    Phone,
+    Pan_Card,
+    StateCode,
+    BarCode,
+    ItemName_Description,
+    CategoryName,
+    SubCategoryName,
+    HSNCode,
+    CaratType,
+    HUID,
+    TagName,
+    GrWeight_Grams,
+    NetWeight_Grams,
+    Rate_Per_Gram,
+    Making_Charge,
+    Wastage_Charge,
+    V_A,
+    Stone_Type,
+    Stone_Pieces_CTS,
+    Stones_RsPs,
+    Discount_RsPs,
+    Amount_RsPs,
+  } = req.body;
+
+  if (
+    CustomerName === undefined ||
+    CustomerName.trim() === "" ||
+    Aadhar === undefined ||
+    Aadhar.trim() === "" ||
+    Phone === undefined ||
+    Phone.trim() === "" ||
+    Pan_Card === undefined ||
+    Pan_Card.trim() === "" ||
+    StateCode === undefined ||
+    StateCode.trim() === "" ||
+    BarCode === undefined ||
+    BarCode.trim() === "" ||
+    ItemName_Description === undefined ||
+    ItemName_Description.trim() === "" ||
+    CategoryName === undefined ||
+    CategoryName.trim() === "" ||
+    SubCategoryName === undefined ||
+    SubCategoryName.trim() === "" ||
+    HSNCode === undefined ||
+    HSNCode.trim() === "" ||
+    CaratType === undefined ||
+    CaratType.trim() === "" ||
+    HUID === undefined ||
+    HUID.trim() === "" ||
+    TagName === undefined ||
+    TagName.trim() === "" ||
+    GrWeight_Grams === undefined ||
+    GrWeight_Grams.trim() === "" ||
+    NetWeight_Grams === undefined ||
+    NetWeight_Grams.trim() === "" ||
+    Rate_Per_Gram === undefined ||
+    Rate_Per_Gram.trim() === "" ||
+    Making_Charge === undefined ||
+    Making_Charge.trim() === "" ||
+    Wastage_Charge === undefined ||
+    Wastage_Charge.trim() === "" ||
+    V_A === undefined ||
+    V_A.trim() === "" ||
+    Stone_Type === undefined ||
+    Stone_Type.trim() === "" ||
+    Stone_Pieces_CTS === undefined ||
+    Stone_Pieces_CTS.trim() === "" ||
+    Stones_RsPs === undefined ||
+    Stones_RsPs.trim() === "" ||
+    Discount_RsPs === undefined ||
+    Discount_RsPs.trim() === "" ||
+    Amount_RsPs === undefined ||
+    Amount_RsPs.trim() === ""
+  ) {
+    res.status(400);
+    throw new Error("All fields are mandatory!");
+  }
 
   const salesBean = {
-    CustomerName: customer.CustomerName,
-    Phone: customer.Phone,
-    Aadhar: customer.Aadhar,
-    Pan_Card: customer.Pan_Card,
-    StateCode: req.body.StateCode,
-    BarCode: product.BarCode,
-    ItemName_Description: product.ItemName_Description,
-    CategoryName: category.CategoryName,
-    HSNCode: product.HSNCode,
-    GrWeight_Grams: product.GrWeight_Grams,
-    NetWeight_Grams: product.NetWeight_Grams,
-    Rate_Per_Gram: product.Rate_Per_Gram,
-    ValAdd_RsPs: product.ValAdd_RsPs,
-    Stones_RsPs: product.Stones_RsPs,
-    Discount_RsPs: product.Discount_RsPs,
-    Amount_RsPs: product.Amount_RsPs,
+    CustomerName: CustomerName,
+    Aadhar: Aadhar,
+    Phone: Phone,
+    Pan_Card: Pan_Card,
+    StateCode: StateCode,
+    BarCode: BarCode,
+    ItemName_Description: ItemName_Description,
+    CategoryName: CategoryName,
+    SubCategoryName: SubCategoryName,
+    HSNCode: HSNCode,
+    CaratType: CaratType,
+    HUID: HUID,
+    TagName: TagName,
+    GrWeight_Grams: GrWeight_Grams,
+    NetWeight_Grams: NetWeight_Grams,
+    Rate_Per_Gram: Rate_Per_Gram,
+    Making_Charge: Making_Charge,
+    Wastage_Charge: Wastage_Charge,
+    V_A: V_A,
+    Stone_Type: Stone_Type,
+    Stone_Pieces_CTS: Stone_Pieces_CTS,
+    Stones_RsPs: Stones_RsPs,
+    Discount_RsPs: Discount_RsPs,
+    Amount_RsPs: Amount_RsPs,
   };
+  return salesBean;
+}
 
-  res.status(201).json(salesBean);
+const getAllSalesData = asyncHandler(async (req, res) => {
+  const salesData = await Sales.findAll();
+  if (salesData.length == 0 || salesData == null) {
+    res.status(404);
+    throw new Error("Entries Not Found in the Sales Table");
+  }
+
+  res.status(200).json(salesData);
 });
 
-async function getCategory(product, res) {
-  const condition = { ActiveStatus: 1, CategoryID: product.CategoryID };
-  const category = await Category.findOne({ where: condition });
-  if (category == null) {
-    res.status(404);
-    throw new Error("Category Is NotFound");
-  }
-  return category;
-}
+const getSalesDataByHUID = asyncHandler(async(req,res)=>{
 
-async function getProduct(req, res) {
-  const condition = req.body.barCode
-    ? { BarCode: req.body.barCode, ActiveStatus: 1 }
-    : null;
-  if (condition === null) {
+  const condition = req.params.HUID ? {HUID : req.params.HUID} : null;
+  if(condition == null){
     res.status(400);
-    throw new Error("BarCode cannot be null or Empty");
+    throw new Error("HUID is Mandatory Please Check Params Correctly");
   }
-  const product = await Product.findOne({ where: condition });
-  if (product == null) {
-    res.status(404);
-    throw new Error("Entry Not Found for the given BarCode...");
-  }
-  return product;
-}
-
-async function getCustomer(req, res) {
-  const condition = req.params.customerName
-    ? { CustomerName: req.params.customerName }
-    : null;
-  if (condition == null) {
-    res.status(400);
-    throw new Error("CustomerName is Mandatory!");
-  }
-  const customer = await Customer.findOne({ where: condition });
-  if (customer == null) {
-    res.status(404);
-    throw new Error("Entry Not Found for the given CustomerName...");
-  }
-  return customer;
-}
-
-const getSalesByCustomerName = asyncHandler(async (req, res) => {
-  const customer = await getCustomer(req, res);
-  const condition = { CustomerID: customer.CustomerID };
-  const sales = await Sales.findAll({ where: condition });
-  if (_.isEmpty(sales)) {
-    res.status(404);
-    throw new Error("Entry Not Found for the given CustomerName...");
+  const sales = await Sales.findOne({where : condition})
+  if(sales == null){
+    res.status(404)
+    throw new Error("Entry Not Found Please Check HUID Code : " + req.params.HUID);
   }
 
-  const salesBean = [];
+  res.status(200).json(sales);
 
-  for (const sale of sales) {
-    const product = await getProductByID(sale, res);
-    const bean = {
-      CustomerName: customer.CustomerName,
-      Phone: customer.Phone,
-      Aadhar: customer.Aadhar,
-      Pan_Card: customer.Pan_Card,
-      StateCode: sale.StateCode,
-      BarCode: product.BarCode,
-      ItemName_Description: product.ItemName_Description,
-      CategoryName: category.CategoryName,
-      HSNCode: product.HSNCode,
-      GrWeight_Grams: product.GrWeight_Grams,
-      NetWeight_Grams: product.NetWeight_Grams,
-      Rate_Per_Gram: product.Rate_Per_Gram,
-      ValAdd_RsPs: product.ValAdd_RsPs,
-      Stones_RsPs: product.Stones_RsPs,
-      Discount_RsPs: product.Discount_RsPs,
-      Amount_RsPs: product.Amount_RsPs,
-    };
-    salesBean.push(bean);
-  }
-
-  res.status(200).json(salesBean);
 });
 
-async function getProductByID(sale, res) {
-  const condition = { ActiveStatus: 1, ProductID: sale.ProductID };
-  const product = await Product.findOne({ where: condition });
-  if (product == null) {
-    res.status(404);
-    throw new Error("Entry Not Found for the given ProductID...");
-  }
-  return product;
-}
-
-module.exports = { addSales, getSalesByCustomerName };
+module.exports = { addSales,getAllSalesData,getSalesDataByHUID };

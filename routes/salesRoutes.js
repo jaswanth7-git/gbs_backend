@@ -1,11 +1,13 @@
 const {
   addSales,
-  getSalesByCustomerName,
+  getSalesDataByHUID,
+  getAllSalesData,
 } = require("../controllers/salesController");
 
 const router = require("express").Router();
 
-router.route("/:customerName").post(addSales);
-router.route("/:customerName").get(getSalesByCustomerName);
+router.route("/").post(addSales);
+router.route("/:HUID").get(getSalesDataByHUID);
+router.route("/").get(getAllSalesData);
 
 module.exports = router;
