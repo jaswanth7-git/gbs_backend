@@ -5,11 +5,13 @@ const {
   deleteCustomer,
   updateCustomer,
   getAll,
+  getCustomerByPhone,
 } = require("../controllers/customerController");
 
 router.route("/").post(addCustomer);
 router.route("/:customerName").get(getCustomerByName);
-router.route("/:customerName").put(updateCustomer);
-router.route("/:customerName").delete(deleteCustomer);
+router.route("/:CustomerID").put(updateCustomer);
+router.route("/phone/:phone").get(getCustomerByPhone);
+router.route("/:CustomerID").delete(deleteCustomer);
 router.route("/").get(getAll);
 module.exports = router;

@@ -23,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     Phone: {
       type: DataTypes.STRING(255),
     },
+    AlternatePhone: {
+      type: DataTypes.STRING(255),
+    },
   });
   return Customer;
 };

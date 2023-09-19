@@ -5,8 +5,29 @@ const _ = require("lodash");
 
 //Add Customer
 const addCustomer = asyncHandler(async (req, res) => {
-  const { CustomerName, Aadhar, Pan_Card, Email, Address, Phone } = req.body;
-  if (!CustomerName || !Aadhar || !Pan_Card || !Email || !Address || !Phone) {
+  const {
+    CustomerName,
+    Aadhar,
+    Pan_Card,
+    Email,
+    Address,
+    Phone,
+    AlternatePhone,
+  } = req.body;
+  if (
+    CustomerName === undefined ||
+    CustomerName.trim() === "" ||
+    Aadhar === undefined ||
+    Aadhar.trim() === "" ||
+    Pan_Card === undefined ||
+    Pan_Card.trim() === "" ||
+    Address === undefined ||
+    Address.trim() === "" ||
+    Phone === undefined ||
+    Phone.trim() === "" ||
+    AlternatePhone === undefined ||
+    AlternatePhone.trim() === ""
+  ) {
     res.status(400);
     throw new Error("All fields are mandatory!");
   }
@@ -18,6 +39,7 @@ const addCustomer = asyncHandler(async (req, res) => {
     Email: Email,
     Address: Address,
     Phone: Phone,
+    AlternatePhone: AlternatePhone,
   };
 
   const existingCustomer = await Customer.findOne({ where: customerBean });
@@ -45,18 +67,32 @@ const getCustomerByName = asyncHandler(async (req, res) => {
   res.status(200).json(customer);
 });
 
+const getCustomerByPhone = asyncHandler(async (req, res) => {
+  const customer = await getCustomerBasedOnPhone(req, res);
+  res.status(200).json(customer);
+});
+
+const getAll = asyncHandler(async (req, res) => {
+  const customers = await Customer.findAll();
+  if (_.isEmpty(customers)) {
+    res.status(404);
+    throw new Error("Customers Table Is Empty");
+  }
+  res.status(200).json(customers);
+});
+
 const updateCustomer = asyncHandler(async (req, res) => {
-  const condition = req.params.customerName
-    ? { CustomerName: req.params.customerName }
+  const condition = req.params.CustomerID
+    ? { CustomerID: req.params.CustomerID }
     : null;
   if (condition == null) {
     res.status(400);
-    throw new Error("CustomerName is mandatory!");
+    throw new Error("CustomerID is mandatory!");
   }
   const customer = await Customer.findOne({ where: condition });
   if (customer == null) {
     res.status(404);
-    throw new Error("Entry Not Found for the given CustomerName...");
+    throw new Error("Entry Not Found for the given CustomerID...");
   }
   const [count, [updatedCustomer]] = await Customer.update(req.body, {
     where: condition,
@@ -71,12 +107,12 @@ const updateCustomer = asyncHandler(async (req, res) => {
 });
 
 const deleteCustomer = asyncHandler(async (req, res) => {
-  const condition = req.params.customerName
-    ? { CustomerName: req.params.customerName }
+  const condition = req.params.CustomerID
+    ? { CustomerID: req.params.CustomerID }
     : null;
   if (condition == null) {
     res.status(400);
-    throw new Error("CustomerName is mandatory!");
+    throw new Error("CustomerID is mandatory!");
   }
   const customer = await Customer.findOne({ where: condition });
   if (customer == null) {
@@ -87,19 +123,31 @@ const deleteCustomer = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Deleted Successfully" });
 });
 
-const getAll = asyncHandler(async (req, res) => {
-  const customers = await Customer.findAll();
-  if (_.isEmpty(customers)) {
-    res.status(404);
-    throw new Error("Customers Table Is Empty");
+async function getCustomerBasedOnPhone(req, res) {
+  const phoneNumber = req.params.phone ? req.params.phone : null;
+  if (phoneNumber == null) {
+    res.status(400);
+    throw new Error("PhoneNumber is mandatory!");
   }
-  res.status(200).json(customers);
-});
+  const condition = { Phone: phoneNumber };
+  const condition2 = { AlternatePhone: phoneNumber };
+
+  const customer = (await Customer.findOne({ where: condition }))
+    ? await Customer.findOne({ where: condition })
+    : await Customer.findOne({ where: condition2 });
+  if (customer == null) {
+    res.status(404);
+    throw new Error("Customer Entry Not found for the given number");
+  }
+  return customer;
+}
 
 module.exports = {
   addCustomer,
+  getCustomerByPhone,
   getCustomerByName,
   deleteCustomer,
   updateCustomer,
-  getAll
+  getAll,
+  getCustomerBasedOnPhone,
 };

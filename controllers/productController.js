@@ -142,22 +142,34 @@ const addProduct = asyncHandler(async (req, res) => {
     HUID.trim() === "" ||
     TagName.trim() === "" ||
     BarCode_Prefix.trim() === "" ||
-    GrWeight_Grams.trim() === "" || isNaN(Number(GrWeight_Grams)) || 
-    NetWeight_Grams.trim() === "" || isNaN(Number(NetWeight_Grams)) ||
-    Rate_Per_Gram.trim() === "" || isNaN(Number(Rate_Per_Gram)) ||
-    Making_Charge.trim() === "" || isNaN(Number(Making_Charge)) ||
-    Making_Direct.trim() === "" || isNaN(Number(Making_Direct)) ||
-    Wastage_Charge.trim() === "" || isNaN(Number(Wastage_Charge)) ||
-    Wastage_Direct.trim() === "" || isNaN(Number(Wastage_Direct)) ||
-    V_A.trim() === "" || isNaN(Number(V_A)) ||
+    GrWeight_Grams.trim() === "" ||
+    isNaN(Number(GrWeight_Grams)) ||
+    NetWeight_Grams.trim() === "" ||
+    isNaN(Number(NetWeight_Grams)) ||
+    Rate_Per_Gram.trim() === "" ||
+    isNaN(Number(Rate_Per_Gram)) ||
+    Making_Charge.trim() === "" ||
+    isNaN(Number(Making_Charge)) ||
+    Making_Direct.trim() === "" ||
+    isNaN(Number(Making_Direct)) ||
+    Wastage_Charge.trim() === "" ||
+    isNaN(Number(Wastage_Charge)) ||
+    Wastage_Direct.trim() === "" ||
+    isNaN(Number(Wastage_Direct)) ||
+    V_A.trim() === "" ||
+    isNaN(Number(V_A)) ||
     Stone_Type.trim() === "" ||
-    Stone_Pieces_CTS.trim() === "" || isNaN(Number(Stone_Pieces_CTS)) ||
-    Stones_RsPs.trim() === "" || isNaN(Number(Stones_RsPs)) ||
-    Discount_RsPs.trim() === "" || isNaN(Number(Discount_RsPs)) ||
-    Amount_RsPs.trim() === "" || isNaN(Number(Amount_RsPs)) ||
+    Stone_Pieces_CTS.trim() === "" ||
+    isNaN(Number(Stone_Pieces_CTS)) ||
+    Stones_RsPs.trim() === "" ||
+    isNaN(Number(Stones_RsPs)) ||
+    Discount_RsPs.trim() === "" ||
+    isNaN(Number(Discount_RsPs)) ||
+    Amount_RsPs.trim() === "" ||
+    isNaN(Number(Amount_RsPs)) ||
     BarCode.trim() === "" ||
     Branch.trim() === ""
-) {
+  ) {
     res.status(400);
     throw new Error("All fields are mandatory!");
   }
@@ -165,19 +177,19 @@ const addProduct = asyncHandler(async (req, res) => {
   const productBean = {
     ItemName_Description: req.body.ItemName_Description,
     HSNCode: req.body.HSNCode,
-    HUID:HUID,
-    TagName:TagName,
-    BarCode_Prefix:BarCode_Prefix,
+    HUID: HUID,
+    TagName: TagName,
+    BarCode_Prefix: BarCode_Prefix,
     GrWeight_Grams: req.body.GrWeight_Grams,
     NetWeight_Grams: req.body.NetWeight_Grams,
     Rate_Per_Gram: req.body.Rate_Per_Gram,
-    Making_Charge:Making_Charge,
-    Making_Direct:Making_Direct,
-    Wastage_Charge:Wastage_Charge,
-    Wastage_Direct:Wastage_Direct,
-    V_A:V_A,
-    Stone_Type:Stone_Type,
-    Stone_Pieces_CTS:Stone_Pieces_CTS,
+    Making_Charge: Making_Charge,
+    Making_Direct: Making_Direct,
+    Wastage_Charge: Wastage_Charge,
+    Wastage_Direct: Wastage_Direct,
+    V_A: V_A,
+    Stone_Type: Stone_Type,
+    Stone_Pieces_CTS: Stone_Pieces_CTS,
     Stones_RsPs: req.body.Stones_RsPs,
     Discount_RsPs: req.body.Discount_RsPs,
     Amount_RsPs: req.body.Amount_RsPs,
@@ -195,9 +207,10 @@ const addProduct = asyncHandler(async (req, res) => {
 //@route PUT /api/products/:HSNCode
 //@access private
 const updateProduct = asyncHandler(async (req, res) => {
-  const condition = req.params.HSNCode && req.params.HUID
-    ? { HSNCode: req.params.HSNCode, HUID:req.params.HUID ,ActiveStatus: 1 }
-    : null;
+  const condition =
+    req.params.HSNCode && req.params.HUID
+      ? { HSNCode: req.params.HSNCode, HUID: req.params.HUID, ActiveStatus: 1 }
+      : null;
   if (condition === null) {
     res.status(400);
     next(new Error("Please Mention Correct HSNCode An HUID"));
@@ -218,7 +231,11 @@ const updateProduct = asyncHandler(async (req, res) => {
   });
   if (count === 0) {
     res.status(404);
-    next(new Error("Entry Not Found for the given Product HUID and HSNCode To Update ..."));
+    next(
+      new Error(
+        "Entry Not Found for the given Product HUID and HSNCode To Update ..."
+      )
+    );
   }
   res.status(200).json(updatedProduct);
 });
@@ -227,9 +244,10 @@ const updateProduct = asyncHandler(async (req, res) => {
 //@route PUT /api/products/:HSNCode
 //@access private
 const deleteProduct = asyncHandler(async (req, res) => {
-  const condition = req.params.HSNCode && req.params.HUID
-    ? { HSNCode: req.params.HSNCode,HUID:req.params.HUID, ActiveStatus: 1 }
-    : null;
+  const condition =
+    req.params.HSNCode && req.params.HUID
+      ? { HSNCode: req.params.HSNCode, HUID: req.params.HUID, ActiveStatus: 1 }
+      : null;
   if (condition === null) {
     res.status(400);
     next(new Error("Please Mention Correct HSNCode"));
@@ -264,7 +282,7 @@ const getProductByBarcode = asyncHandler(async (req, res) => {
   const condition = barCode
     ? {
         BarCode: barCode,
-        ActiveStatus: 1
+        ActiveStatus: 1,
       }
     : null;
   if (condition == null) {

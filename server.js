@@ -17,6 +17,7 @@ app.use("/api/categories", require("./routes/categoryRoutes"));
 app.use("/api/user",require("./routes/userRoutes"));
 app.use("/api/customer",require("./routes/customerRoutes"));
 app.use("/api/sales",require("./routes/salesRoutes"));
+app.use("/api/advance",require("./routes/advanceRoutes"));
 app.use(errorHandler);
 
 const port = process.env.PORT || 9001;
