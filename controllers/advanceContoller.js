@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const _ = require("lodash");
 const { getCustomerBasedOnPhone } = require("./customerController");
 const Advance = db.advance;
+const Customer = db.customer;
 
 const addAdvanceAmount = asyncHandler(async (req, res) => {
   const { Amount } = req.body;
@@ -41,7 +42,18 @@ const getAdvanceAmountByCustomerNumber = asyncHandler(async(req,res)=>{
     res.status(200).json(combinedData)
 });
 
+const getAllAdvanceAmounts = asyncHandler(async(req,res) => {
+  const advancesOfCustomers = await Advance.findAll();
+  if(_.isEmpty(advancesOfCustomers)){
+    res.status(404);
+    throw new Error("No Customer Hasn't paid any advances Till Date");
+  }
+  res.status(200).json(advancesOfCustomers);
+});
+
+
 module.exports = {
     addAdvanceAmount,
-    getAdvanceAmountByCustomerNumber
+    getAdvanceAmountByCustomerNumber,
+    getAllAdvanceAmounts
 }
