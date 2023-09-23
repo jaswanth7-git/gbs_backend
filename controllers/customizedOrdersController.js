@@ -62,17 +62,35 @@ const getOrderByModelNumber = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("ModelNumber is mandatory, Check the params");
   }
-  const orders = await CustomizedOrders.findAll({ where: condition });
-  if (_.isEmpty(orders)) {
+  const orders = await CustomizedOrders.findOne({ where: condition });
+  if (orders == null) {
     res.status(404);
     throw new Error("Orders Not Found");
   }
   res.status(200).json(orders);
 });
 
+//DELETE
+const deleteByModelNumber = asyncHandler(async (req, res) => {
+    const modelNumber = req.params.modelNumber;
+    const condition = modelNumber ? {ModelNumber :  modelNumber } : null;
+    if (condition == null) {
+      res.status(400);
+      throw new Error("ModelNumber is mandatory, Check the params");
+    }
+    const orders = await CustomizedOrders.findOne({ where: condition });
+    if (orders == null) {
+      res.status(404);
+      throw new Error("Orders Not Found");
+    }
+    await CustomizedOrders.destroy({where : condition})
+    res.status(200).json({message : "Deleted Successfully"});
+  });
+
 module.exports = {
     getOrderByModelNumber,
     getAllOrders,
     getCustomizedOrder,
-    addCustomizedOrder
+    addCustomizedOrder,
+    deleteByModelNumber
 }
