@@ -35,6 +35,7 @@ db.user = require("../models/user.js")(sequelize, DataTypes);
 db.customer = require("../models/customer.js")(sequelize, DataTypes);
 db.sales = require("../models/sales.js")(sequelize, DataTypes);
 db.advance = require("../models/advance.js")(sequelize, DataTypes);
+db.customizedOrders = require("../models/customizedOrders.js")(sequelize, DataTypes);
 
 db.category.hasMany(db.products, {
   foreignKey: "CategoryID",
