@@ -1,6 +1,8 @@
 const {
   addAdvanceAmount,
   getAdvanceAmountByCustomerNumber,
+  updateAdvanceAmount,
+  getAllAdvanceAmounts,
 } = require("../controllers/advanceContoller");
 
 const router = require("express").Router();

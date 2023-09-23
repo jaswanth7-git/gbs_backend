@@ -87,6 +87,7 @@ module.exports = {
   addAdvanceAmount,
   getAdvanceAmountByCustomerNumber,
   getAllAdvanceAmounts,
+  updateAdvanceAmount
 };
 
 async function getResultSet(advancesOfCustomers, res) {
