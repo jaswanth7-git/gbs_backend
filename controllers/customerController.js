@@ -142,6 +142,16 @@ async function getCustomerBasedOnPhone(req, res) {
   return customer;
 }
 
+async function getCustomerByCustomerID(customerID) {
+  const condition = {CustomerID : customerID};
+  const customer = await Customer.findOne({where : condition})
+  if (customer == null) {
+    res.status(404);
+    throw new Error("Customer Entry Not found for the given number");
+  }
+  return customer;
+}
+
 module.exports = {
   addCustomer,
   getCustomerByPhone,
@@ -150,4 +160,5 @@ module.exports = {
   updateCustomer,
   getAll,
   getCustomerBasedOnPhone,
+  getCustomerByCustomerID,
 };
