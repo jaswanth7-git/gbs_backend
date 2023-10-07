@@ -48,7 +48,7 @@ const getAllAdvanceAmounts = asyncHandler(async (req, res) => {
     throw new Error("No Customer Hasn't paid any advances Till Date");
   }
   const resultArray = await getResultSet(advancesOfCustomers, res);
-  res.status(200).json(resultArray);
+  res.status(200).json(advancesOfCustomers);
 });
 
 //PUT
@@ -112,6 +112,5 @@ async function getAdvancesOfCustomer(customer, res) {
     res.status(404);
     throw new Error("Customer Hasn't paid any advances Till Date");
   }
-  const combinedData = { ...customer, advances: existingAdvanceData };
-  return combinedData;
+  return existingAdvanceData;
 }

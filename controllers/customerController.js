@@ -15,7 +15,7 @@ const addCustomer = asyncHandler(async (req, res) => {
     AlternatePhone,
   } = req.body;
   if (
-    CustomerName === undefined ||
+    CustomerName === undefined || 
     CustomerName.trim() === "" ||
     Aadhar === undefined ||
     Aadhar.trim() === "" ||
