@@ -68,7 +68,12 @@ const getCustomerByName = asyncHandler(async (req, res) => {
 });
 
 const getCustomerByPhone = asyncHandler(async (req, res) => {
-  const customer = await getCustomerBasedOnPhone(req, res);
+  const phoneNumber = req.params.phone ? req.params.phone : null;
+  if (phoneNumber == null) {
+    res.status(400);
+    throw new Error("PhoneNumber is mandatory!");
+  }
+  const customer = await getCustomerByPhoneNumber(phoneNumber, res);
   res.status(200).json(customer);
 });
 
@@ -123,12 +128,20 @@ const deleteCustomer = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Deleted Successfully" });
 });
 
-async function getCustomerBasedOnPhone(req, res) {
-  const phoneNumber = req.params.phone ? req.params.phone : null;
-  if (phoneNumber == null) {
+
+const getCustomerBasedOnID = asyncHandler(async (req, res) => {
+  const customerID = req.params.CustomerID
+    ?req.params.CustomerID 
+    : null;
+  if (customerID == null) {
     res.status(400);
-    throw new Error("PhoneNumber is mandatory!");
+    throw new Error("CustomerID is mandatory!");
   }
+const customer = getCustomerByCustomerID(customerID)
+  res.status(200).json(customer);
+});
+
+async function getCustomerByPhoneNumber(phoneNumber, res) {
   const condition = { Phone: phoneNumber };
   const condition2 = { AlternatePhone: phoneNumber };
 
@@ -159,6 +172,7 @@ module.exports = {
   deleteCustomer,
   updateCustomer,
   getAll,
-  getCustomerBasedOnPhone,
   getCustomerByCustomerID,
+  getCustomerBasedOnID,
+  getCustomerByPhoneNumber
 };
