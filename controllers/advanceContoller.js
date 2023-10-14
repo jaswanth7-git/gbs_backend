@@ -20,6 +20,7 @@ const addAdvanceAmount = asyncHandler(async (req, res) => {
     Amount: Amount,
     Date: formattedDate,
     CustomerID: customer.CustomerID,
+    CustomerName : customer.CustomerName
   };
 
   const savedAdvance = await Advance.create(advanceBean);

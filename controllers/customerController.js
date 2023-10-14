@@ -137,7 +137,7 @@ const getCustomerBasedOnID = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("CustomerID is mandatory!");
   }
-const customer = getCustomerByCustomerID(customerID)
+const customer = await getCustomerByCustomerID(customerID)
   res.status(200).json(customer);
 });
 

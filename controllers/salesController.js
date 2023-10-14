@@ -137,21 +137,40 @@ const getAllSalesData = asyncHandler(async (req, res) => {
   res.status(200).json(salesData);
 });
 
-const getSalesDataByHUID = asyncHandler(async(req,res)=>{
-
-  const condition = req.params.HUID ? {HUID : req.params.HUID} : null;
-  if(condition == null){
+const getSalesDataByHUID = asyncHandler(async (req, res) => {
+  const condition = req.params.HUID ? { HUID: req.params.HUID } : null;
+  if (condition == null) {
     res.status(400);
     throw new Error("HUID is Mandatory Please Check Params Correctly");
   }
-  const sales = await Sales.findOne({where : condition})
-  if(sales == null){
-    res.status(404)
-    throw new Error("Entry Not Found Please Check HUID Code : " + req.params.HUID);
+  const sales = await Sales.findOne({ where: condition });
+  if (sales == null) {
+    res.status(404);
+    throw new Error(
+      "Entry Not Found Please Check HUID Code : " + req.params.HUID
+    );
   }
 
   res.status(200).json(sales);
-
 });
 
-module.exports = { addSales,getAllSalesData,getSalesDataByHUID };
+const getSalesBySalesID = asyncHandler(async (req, res) => {
+  const SalesID = req.params.SalesID ? req.params.SalesID : null;
+  if (SalesID == null) {
+    res.status(400);
+    throw new Error("Sales ID is Mandatory");
+  }
+  if (isNaN(SalesID)) {
+    res.status(400);
+    throw new Error("SalesID Should be numeric please check and try again");
+  }
+  const condition = { SalesID: SalesID };
+  const sales = await Sales.findOne({ where: condition });
+  if (sales == null) {
+    res.status(404);
+    throw new Error("Entry Not Found Please Check SalesID : " + SalesID);
+  }
+  res.status(200).json(sales);
+});
+
+module.exports = { addSales, getAllSalesData, getSalesDataByHUID,getSalesBySalesID };

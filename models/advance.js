@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     Date: {
       type: DataTypes.STRING(255),
     },
+    CustomerName: {
+      type: DataTypes.STRING(255),
+    },
   });
   return Advance;
 };
