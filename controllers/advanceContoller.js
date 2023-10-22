@@ -9,8 +9,8 @@ const Advance = db.advance;
 
 //POST
 const addAdvanceAmount = asyncHandler(async (req, res) => {
-  const { Amount } = req.body;
-  if (Amount === undefined || Amount.trim() === "") {
+  const { Amount,AdvanceDesc } = req.body;
+  if (Amount === undefined || Amount.trim() === "" || AdvanceDesc === undefined || AdvanceDesc.trim() == "") {
     res.status(400);
     throw new Error("Amount is mandatory, Check the request Body");
   }
@@ -18,6 +18,7 @@ const addAdvanceAmount = asyncHandler(async (req, res) => {
   const customer = await getCustomerBasedOnPhone(req, res);
   const advanceBean = {
     Amount: Amount,
+    AdvanceDesc: AdvanceDesc,
     Date: formattedDate,
     CustomerID: customer.CustomerID,
     CustomerName : customer.CustomerName

@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
     Amount: {
       type: DataTypes.STRING(255),
     },
+    AdvanceDesc: {
+      type: DataTypes.STRING(255),
+    },
     Date: {
       type: DataTypes.STRING(255),
     },
