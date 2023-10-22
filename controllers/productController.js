@@ -142,30 +142,18 @@ const addProduct = asyncHandler(async (req, res) => {
     TagName.trim() === "" ||
     BarCode_Prefix.trim() === "" ||
     GrWeight_Grams.trim() === "" ||
-    isNaN(Number(GrWeight_Grams)) ||
     NetWeight_Grams.trim() === "" ||
-    isNaN(Number(NetWeight_Grams)) ||
     Rate_Per_Gram.trim() === "" ||
-    isNaN(Number(Rate_Per_Gram)) ||
     Making_Charge.trim() === "" ||
-    isNaN(Number(Making_Charge)) ||
     Making_Direct.trim() === "" ||
-    isNaN(Number(Making_Direct)) ||
     Wastage_Charge.trim() === "" ||
-    isNaN(Number(Wastage_Charge)) ||
     Wastage_Direct.trim() === "" ||
-    isNaN(Number(Wastage_Direct)) ||
     V_A.trim() === "" ||
-    isNaN(Number(V_A)) ||
     Stone_Type.trim() === "" ||
     Stone_Pieces_CTS.trim() === "" ||
-    isNaN(Number(Stone_Pieces_CTS)) ||
     Stones_RsPs.trim() === "" ||
-    isNaN(Number(Stones_RsPs)) ||
     Discount_RsPs.trim() === "" ||
-    isNaN(Number(Discount_RsPs)) ||
     Amount_RsPs.trim() === "" ||
-    isNaN(Number(Amount_RsPs)) ||
     BarCode.trim() === "" ||
     Branch.trim() === ""
   ) {
