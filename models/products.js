@@ -10,19 +10,15 @@ module.exports = (sequelize, DataTypes) => {
     },
     HSNCode: {
       type: DataTypes.STRING(255),
-      unique: true,
     },
     HUID: {
       type: DataTypes.STRING(255),
-      unique: true,
     },
     TagName: {
       type: DataTypes.STRING(255),
-      unique: true,
     },
     BarCode_Prefix: {
       type: DataTypes.STRING(255),
-      unique: true,
     },
     GrWeight_Grams: {
       type: DataTypes.STRING(255),

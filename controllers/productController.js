@@ -113,7 +113,6 @@ const addProduct = asyncHandler(async (req, res) => {
   if (existingProduct) {
     res.status(409);
     res.json({ message: "Already Exists with the same HSNCode" });
-    return;
   }
 
   if (
@@ -175,14 +174,14 @@ const addProduct = asyncHandler(async (req, res) => {
   }
 
   const productBean = {
-    ItemName_Description: req.body.ItemName_Description,
-    HSNCode: req.body.HSNCode,
+    ItemName_Description: ItemName_Description,
+    HSNCode: HSNCode,
     HUID: HUID,
     TagName: TagName,
     BarCode_Prefix: BarCode_Prefix,
-    GrWeight_Grams: req.body.GrWeight_Grams,
-    NetWeight_Grams: req.body.NetWeight_Grams,
-    Rate_Per_Gram: req.body.Rate_Per_Gram,
+    GrWeight_Grams: GrWeight_Grams,
+    NetWeight_Grams: NetWeight_Grams,
+    Rate_Per_Gram: Rate_Per_Gram,
     Making_Charge: Making_Charge,
     Making_Direct: Making_Direct,
     Wastage_Charge: Wastage_Charge,
@@ -190,11 +189,11 @@ const addProduct = asyncHandler(async (req, res) => {
     V_A: V_A,
     Stone_Type: Stone_Type,
     Stone_Pieces_CTS: Stone_Pieces_CTS,
-    Stones_RsPs: req.body.Stones_RsPs,
-    Discount_RsPs: req.body.Discount_RsPs,
-    Amount_RsPs: req.body.Amount_RsPs,
-    BarCode: req.body.BarCode,
-    Branch: req.body.Branch,
+    Stones_RsPs: Stones_RsPs,
+    Discount_RsPs: Discount_RsPs,
+    Amount_RsPs: Amount_RsPs,
+    BarCode: BarCode,
+    Branch: Branch,
     ActiveStatus: 1,
     CategoryID: category.CategoryID,
   };
