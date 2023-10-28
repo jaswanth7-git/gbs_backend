@@ -10,6 +10,7 @@ const { getCategoryBasedOnID } = require("./categoryController");
 //@route GET /api/products/:category
 //@access private
 const getProducts = asyncHandler(async (req, res) => {
+  try {
   const categoryName = req.params.category;
   const SubCategoryName = req.params.SubCategoryName;
   const condition =
@@ -46,12 +47,17 @@ const getProducts = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json(products);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //@desc get All Products
 //@route GET /api/products/
 //@access private
 const getAllProducts = asyncHandler(async (req, res) => {
+  try {
   const productCondition = { ActiveStatus: 1 };
 
   const products = await Product.findAll({ where: productCondition });
@@ -60,12 +66,17 @@ const getAllProducts = asyncHandler(async (req, res) => {
     throw new Error("Product not found");
   }
   res.status(200).json(products);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //@desc add products
 //@route POST /api/products/:category
 //@access private
 const addProduct = asyncHandler(async (req, res) => {
+  try{
   const categoryName = req.params.category;
   const branch = req.body.Branch;
   const SubCategoryName = req.params.SubCategoryName;
@@ -188,7 +199,6 @@ const addProduct = asyncHandler(async (req, res) => {
     res.status(406);
     throw new Error("Already Exists with the same HSNCode");
   }
-  try {
     const product = await Product.create(productBean);
     res.status(201).json(product);
   } catch (error) {
@@ -201,6 +211,7 @@ const addProduct = asyncHandler(async (req, res) => {
 //@route PUT /api/products/:HSNCode
 //@access private
 const updateProduct = asyncHandler(async (req, res) => {
+  try {
   const condition =
     req.params.HSNCode && req.params.HUID
       ? { HSNCode: req.params.HSNCode, HUID: req.params.HUID, ActiveStatus: 1 }
@@ -232,12 +243,17 @@ const updateProduct = asyncHandler(async (req, res) => {
     );
   }
   res.status(200).json(updatedProduct);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //@desc delete Products
 //@route PUT /api/products/:HSNCode
 //@access private
 const deleteProduct = asyncHandler(async (req, res) => {
+  try {
   const condition =
     req.params.HSNCode && req.params.HUID
       ? { HSNCode: req.params.HSNCode, HUID: req.params.HUID, ActiveStatus: 1 }
@@ -258,6 +274,10 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
   await Product.update({ ActiveStatus: 0 }, { where: condition });
   res.status(200).json({ message: "Successfully Deleted" });
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //@desc delete All Products
@@ -272,6 +292,7 @@ const deleteAll = asyncHandler(async (req, res) => {
 //@route GET /api/products/BarCode
 //@access private
 const getProductByBarcode = asyncHandler(async (req, res) => {
+  try {
   const barCode = req.params.barCode;
   const condition = barCode
     ? {
@@ -301,6 +322,10 @@ const getProductByBarcode = asyncHandler(async (req, res) => {
   };
 
   res.status(200).json(productWithCategory);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 module.exports = {

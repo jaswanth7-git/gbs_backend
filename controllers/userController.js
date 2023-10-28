@@ -5,6 +5,7 @@ const asyncHandler = require("express-async-handler");
 
 //POST Method
 const addUser = asyncHandler(async (req, res) => {
+  try {
   const { userName, password, Branch, Role } = req.body;
   if (!userName || !password || !Branch || !Role) {
     res.status(400);
@@ -18,17 +19,22 @@ const addUser = asyncHandler(async (req, res) => {
     Role: Role,
   };
   const exists = await User.findOne({ where: { userName: userName } });
-  if (exists !== null) {
+  if (exists != null) {
     res.status(400);
     throw new Error("Entry Exists With Same Data Try Changing UserName");
   }
 
   const user = await User.create(userBean);
   res.status(201).json(user);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //GET Users By Branch
 const getUserByBranch = asyncHandler(async (req, res,next) => {
+  try {
   const branch = req.params.branch ? req.params.branch : null;
   if(branch==null){
     res.status(400);
@@ -46,6 +52,10 @@ const getUserByBranch = asyncHandler(async (req, res,next) => {
     throw new Error("No Entries Found For The Given Branch.");
   }
   res.status(200).json({status : "SUCCESS", Role : user.Role});
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 module.exports = { addUser, getUserByBranch };

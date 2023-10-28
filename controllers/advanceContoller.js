@@ -9,6 +9,7 @@ const Advance = db.advance;
 
 //POST
 const addAdvanceAmount = asyncHandler(async (req, res) => {
+  try{
   const phoneNumber = req.params.phone ? req.params.phone : null;
   if (phoneNumber == null) {
     res.status(400);
@@ -34,6 +35,11 @@ const addAdvanceAmount = asyncHandler(async (req, res) => {
   const savedAdvance = await Advance.create(advanceBean);
 
   res.status(201).json(savedAdvance);
+
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 function prepareCurrentDate() {
@@ -45,6 +51,7 @@ function prepareCurrentDate() {
 
 //GET
 const getAdvanceAmountByCustomerNumber = asyncHandler(async (req, res) => {
+  try {
   const phoneNumber = req.params.phone ? req.params.phone : null;
   if (phoneNumber == null) {
     res.status(400);
@@ -53,10 +60,15 @@ const getAdvanceAmountByCustomerNumber = asyncHandler(async (req, res) => {
   const customer = await getCustomerByPhoneNumber(phoneNumber, res);
   const combinedData = await getAdvancesOfCustomer(customer, res);
   res.status(200).json(combinedData);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //GET
 const getAllAdvanceAmounts = asyncHandler(async (req, res) => {
+  try {
   const advancesOfCustomers = await Advance.findAll();
   if (_.isEmpty(advancesOfCustomers)) {
     res.status(404);
@@ -64,10 +76,15 @@ const getAllAdvanceAmounts = asyncHandler(async (req, res) => {
   }
   const resultArray = await getResultSet(advancesOfCustomers, res);
   res.status(200).json(advancesOfCustomers);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //PUT
 const updateAdvanceAmount = asyncHandler(async (req, res) => {
+  try {
   for (const advID in req.body) {
     const amount = requestBody[advID];
     const advance = await Advance.findByPk(existingAdvanceID);
@@ -96,6 +113,10 @@ const updateAdvanceAmount = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({message : "Updated Successfully"})
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 module.exports = {

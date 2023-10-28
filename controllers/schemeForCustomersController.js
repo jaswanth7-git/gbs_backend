@@ -9,6 +9,7 @@ const SchemeForCustomers = db.schemeForCustomers;
  * @POST
  */
 const addSchemes = asyncHandler(async (req, res) => {
+  try {
   const { SchemeName, MobileNumber, SchemeAmount, SchemeDesc } = req.body;
   if (
     SchemeName === undefined ||
@@ -40,18 +41,27 @@ const addSchemes = asyncHandler(async (req, res) => {
     throw new Error("Scheme is Not Added");
   }
   res.status(201).json(schemeForCustomers);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 /**
  * @returns SchemeForCustomers
  */
 const getAllSchemes = asyncHandler(async (req, res) => {
+  try {
   const schemes = await SchemeForCustomers.findAll();
   if (_.isEmpty(schemes)) {
     res.status(404);
     throw new Error("No Schemes Found");
   }
   res.status(200).json(schemes);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 /**
@@ -59,6 +69,7 @@ const getAllSchemes = asyncHandler(async (req, res) => {
  * @param MobileNumber
  */
 const getSchemeByNumber = asyncHandler(async (req, res) => {
+  try{ 
   const MobileNumber = req.params.MobileNumber ? req.params.MobileNumber : null;
   if (MobileNumber == null) {
     res.status(400);
@@ -71,6 +82,10 @@ const getSchemeByNumber = asyncHandler(async (req, res) => {
     throw new Error("Scheme Not Found");
   }
   res.status(200).json(scheme);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 module.exports = {

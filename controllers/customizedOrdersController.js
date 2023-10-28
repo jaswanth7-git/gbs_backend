@@ -5,6 +5,7 @@ const CustomizedOrders = db.customizedOrders;
 
 //POST
 const addCustomizedOrder = asyncHandler(async (req, res) => {
+  try {
   const { DeliveryDate, ItemName, ModelNumber } = req.body;
   if (
     DeliveryDate === undefined ||
@@ -26,10 +27,15 @@ const addCustomizedOrder = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json(customizedOrder);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //GET
 const getCustomizedOrder = asyncHandler(async (req, res) => {
+  try {
   const deliveryDate = req.params.deliveryDate;
   const condition = deliveryDate ? { DeliveryDate: deliveryDate } : null;
   if (condition == null) {
@@ -42,20 +48,30 @@ const getCustomizedOrder = asyncHandler(async (req, res) => {
     throw new Error("Orders Not Found");
   }
   res.status(200).json(orders);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //GET
 const getAllOrders = asyncHandler(async (req, res) => {
+  try {
   const orders = await CustomizedOrders.findAll();
   if (_.isEmpty(orders)) {
     res.status(404);
     throw new Error("Orders Not Found");
   }
   res.status(200).json(orders);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //GET
 const getOrderByModelNumber = asyncHandler(async (req, res) => {
+  try {
   const modelNumber = req.params.modelNumber;
   const condition = modelNumber ? { ModelNumber: modelNumber } : null;
   if (condition == null) {
@@ -68,10 +84,15 @@ const getOrderByModelNumber = asyncHandler(async (req, res) => {
     throw new Error("Orders Not Found");
   }
   res.status(200).json(orders);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 //DELETE
 const deleteByModelNumber = asyncHandler(async (req, res) => {
+  try {
   const modelNumber = req.params.modelNumber;
   const condition = modelNumber ? { ModelNumber: modelNumber } : null;
   if (condition == null) {
@@ -85,6 +106,10 @@ const deleteByModelNumber = asyncHandler(async (req, res) => {
   }
   await CustomizedOrders.destroy({ where: condition });
   res.status(200).json({ message: "Deleted Successfully" });
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 module.exports = {

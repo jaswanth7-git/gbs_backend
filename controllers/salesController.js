@@ -4,6 +4,7 @@ const asyncHandler = require("express-async-handler");
 const _ = require("lodash");
 
 const addSales = asyncHandler(async (req, res) => {
+  try {
   const salesBean = checkRequestBodyAndPrepareBean(req, res);
 
   const existingSalesEntry = await Sales.findOne({ where: salesBean });
@@ -14,6 +15,10 @@ const addSales = asyncHandler(async (req, res) => {
 
   const sales = await Sales.create(salesBean);
   res.status(201).json(sales);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 function checkRequestBodyAndPrepareBean(req, res) {
@@ -128,6 +133,7 @@ function checkRequestBodyAndPrepareBean(req, res) {
 }
 
 const getAllSalesData = asyncHandler(async (req, res) => {
+  try {
   const salesData = await Sales.findAll();
   if (salesData.length == 0 || salesData == null) {
     res.status(404);
@@ -135,9 +141,14 @@ const getAllSalesData = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json(salesData);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 const getSalesDataByHUID = asyncHandler(async (req, res) => {
+  try {
   const condition = req.params.HUID ? { HUID: req.params.HUID } : null;
   if (condition == null) {
     res.status(400);
@@ -152,9 +163,14 @@ const getSalesDataByHUID = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json(sales);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 const getSalesBySalesID = asyncHandler(async (req, res) => {
+  try {
   const SalesID = req.params.SalesID ? req.params.SalesID : null;
   if (SalesID == null) {
     res.status(400);
@@ -171,6 +187,10 @@ const getSalesBySalesID = asyncHandler(async (req, res) => {
     throw new Error("Entry Not Found Please Check SalesID : " + SalesID);
   }
   res.status(200).json(sales);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 module.exports = { addSales, getAllSalesData, getSalesDataByHUID,getSalesBySalesID };

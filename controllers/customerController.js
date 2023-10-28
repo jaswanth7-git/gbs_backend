@@ -5,6 +5,7 @@ const _ = require("lodash");
 
 //Add Customer
 const addCustomer = asyncHandler(async (req, res) => {
+  try {
   const {
     CustomerName,
     Aadhar,
@@ -49,9 +50,14 @@ const addCustomer = asyncHandler(async (req, res) => {
   }
   const customer = await Customer.create(customerBean);
   res.status(200).json(customer);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 const getCustomerByName = asyncHandler(async (req, res) => {
+  try {
   const condition = req.params.customerName
     ? { CustomerName: req.params.customerName }
     : null;
@@ -65,9 +71,14 @@ const getCustomerByName = asyncHandler(async (req, res) => {
     throw new Error("Entry Not Found for the given CustomerName...");
   }
   res.status(200).json(customer);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 const getCustomerByPhone = asyncHandler(async (req, res) => {
+  try {
   const phoneNumber = req.params.phone ? req.params.phone : null;
   if (phoneNumber == null) {
     res.status(400);
@@ -75,18 +86,28 @@ const getCustomerByPhone = asyncHandler(async (req, res) => {
   }
   const customer = await getCustomerByPhoneNumber(phoneNumber, res);
   res.status(200).json(customer);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 const getAll = asyncHandler(async (req, res) => {
+  try {
   const customers = await Customer.findAll();
   if (_.isEmpty(customers)) {
     res.status(404);
     throw new Error("Customers Table Is Empty");
   }
   res.status(200).json(customers);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 const updateCustomer = asyncHandler(async (req, res) => {
+  try {
   const condition = req.params.CustomerID
     ? { CustomerID: req.params.CustomerID }
     : null;
@@ -109,9 +130,14 @@ const updateCustomer = asyncHandler(async (req, res) => {
     throw new Error("Failed to update customer.");
   }
   res.status(200).json(updatedCustomer);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 const deleteCustomer = asyncHandler(async (req, res) => {
+  try {
   const condition = req.params.CustomerID
     ? { CustomerID: req.params.CustomerID }
     : null;
@@ -126,10 +152,15 @@ const deleteCustomer = asyncHandler(async (req, res) => {
   }
   await Customer.destroy({ where: condition });
   res.status(200).json({ message: "Deleted Successfully" });
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 
 const getCustomerBasedOnID = asyncHandler(async (req, res) => {
+  try {
   const customerID = req.params.CustomerID
     ?req.params.CustomerID 
     : null;
@@ -139,9 +170,14 @@ const getCustomerBasedOnID = asyncHandler(async (req, res) => {
   }
 const customer = await getCustomerByCustomerID(customerID)
   res.status(200).json(customer);
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 });
 
 async function getCustomerByPhoneNumber(phoneNumber, res) {
+  try{
   const condition = { Phone: phoneNumber };
   const condition2 = { AlternatePhone: phoneNumber };
 
@@ -153,6 +189,10 @@ async function getCustomerByPhoneNumber(phoneNumber, res) {
     throw new Error("Customer Entry Not found for the given number");
   }
   return customer;
+} catch (error) {
+  res.status(500);
+  throw new Error("Internal Server Error");
+}
 }
 
 async function getCustomerByCustomerID(customerID) {
