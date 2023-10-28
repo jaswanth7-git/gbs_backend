@@ -8,6 +8,9 @@ module.exports = (sequelize, DataTypes) => {
       DeliveryDate: {
         type: DataTypes.STRING(255),
       },
+      OrderedDate: {
+        type: DataTypes.STRING(255),
+      },
       ItemName: {
         type: DataTypes.STRING(255),
       },
