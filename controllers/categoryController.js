@@ -63,7 +63,7 @@ const getCategory = asyncHandler(async (req, res, next) => {
   res.status(200).json(category);
 });
 
-const updateCategory = asyncHandler(async (req, res, next) => {
+const updateCategory = asyncHandler(async (req, res) => {
   const categoryName = req.params.category;
   const SubCategoryName = req.params.SubCategoryName;
   const condition =
@@ -76,12 +76,12 @@ const updateCategory = asyncHandler(async (req, res, next) => {
       : null;
   if (condition === null) {
     res.status(400);
-    next(new Error("Please Mention Correct CategoryName"));
+    new Error("Please Mention Correct CategoryName");
   }
   const category = await Category.findOne({ where: condition });
   if (category === null) {
     res.status(404);
-    next(new Error("Entry Not Found for the given Category..."));
+    new Error("Entry Not Found for the given Category...");
   }
   const [count, [updatedCategory]] = await Category.update(req.body, {
     where: condition,
@@ -89,12 +89,12 @@ const updateCategory = asyncHandler(async (req, res, next) => {
   });
   if (count === 0) {
     res.status(404);
-    next(new Error("Entry Not Found for the given Category To Update ..."));
+    new Error("Entry Not Found for the given Category To Update ...");
   }
   res.status(200).json(updatedCategory);
 });
 
-const deleteCategory = asyncHandler(async (req, res, next) => {
+const deleteCategory = asyncHandler(async (req, res) => {
   const categoryName = req.params.category;
   const SubCategoryName = req.params.SubCategoryName;
   const condition =
@@ -107,12 +107,12 @@ const deleteCategory = asyncHandler(async (req, res, next) => {
       : null;
   if (condition === null) {
     res.status(400);
-    next(new Error("Please Mention Correct CategoryName"));
+    new Error("Please Mention Correct CategoryName");
   }
   const category = await Category.findOne({ where: condition });
   if (category === null) {
     res.status(404);
-    next(new Error("Entry Not Found for the given Category..."));
+    new Error("Entry Not Found for the given Category...");
   }
   // Update the category's ActiveStatus to 0
   await Category.update({ ActiveStatus: 0 }, { where: condition });
@@ -125,6 +125,26 @@ const deleteAll = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "Table truncated successfully." });
 });
 
+const getCategoryByID = asyncHandler(async(req,res)=>{
+const ID = req.params.CategoryID;
+  const category = await getCategoryBasedOnID(ID, res);
+res.status(200).json(category);
+});
+
+async function getCategoryBasedOnID(ID, res) {
+  const condition = ID ? { CategoryID: ID } : null;
+  if (condition == null) {
+    res.status(400);
+    new Error("CategoryID is Null ... ");
+  }
+  const category = await Category.findOne({ where: condition });
+  if (category == null) {
+    res.status(404);
+    new Error("Category Not Found ....");
+  }
+  return category;
+}
+
 module.exports = {
   deleteAll,
   deleteCategory,
@@ -132,4 +152,7 @@ module.exports = {
   getAllCategories,
   addCategory,
   getCategory,
+  getCategoryBasedOnID,
+  getCategoryByID
 };
+

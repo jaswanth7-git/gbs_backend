@@ -4,6 +4,7 @@ const Product = db.products;
 const Category = db.category;
 const _ = require("lodash");
 const { Op } = require("sequelize");
+const { getCategoryBasedOnID } = require("./categoryController");
 
 //@desc Get all products
 //@route GET /api/products/:category
@@ -68,14 +69,15 @@ const addProduct = asyncHandler(async (req, res) => {
   const categoryName = req.params.category;
   const branch = req.body.Branch;
   const SubCategoryName = req.params.SubCategoryName;
-  const condition = categoryName
-    ? {
-        CategoryName: categoryName,
-        ActiveStatus: 1,
-        SubCategoryName: SubCategoryName,
-        Branch: branch,
-      }
-    : null;
+  const condition =
+    categoryName && SubCategoryName && branch
+      ? {
+          CategoryName: categoryName,
+          ActiveStatus: 1,
+          SubCategoryName: SubCategoryName,
+          Branch: branch,
+        }
+      : null;
   if (condition === null) {
     res.status(404);
     throw new Error("Category cannot be null or Empty");
@@ -107,13 +109,6 @@ const addProduct = asyncHandler(async (req, res) => {
     BarCode,
     Branch,
   } = req.body;
-  const existingProduct = await Product.findOne({
-    where: { HSNCode: HSNCode, HUID: HUID, ActiveStatus: 1 },
-  });
-  if (existingProduct) {
-    res.status(409);
-    res.json({ message: "Already Exists with the same HSNCode" });
-  }
 
   if (
     ItemName_Description === undefined ||
@@ -186,8 +181,20 @@ const addProduct = asyncHandler(async (req, res) => {
     CategoryID: category.CategoryID,
   };
 
-  const product = await Product.create(productBean);
-  res.status(201).json(product);
+  const existingProduct = await Product.findOne({
+    where: { BarCode: BarCode, HSNCode: HSNCode, HUID: HUID },
+  });
+  if (existingProduct) {
+    res.status(406);
+    throw new Error("Already Exists with the same HSNCode");
+  }
+  try {
+    const product = await Product.create(productBean);
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(500);
+    throw new Error("Barcode, HSN, HUID should be unique");
+  }
 });
 
 //@desc update All Products
@@ -281,7 +288,19 @@ const getProductByBarcode = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Product not found");
   }
-  res.status(200).json(product);
+  const category = await getCategoryBasedOnID(product.CategoryID, res);
+  if (category == null) {
+    res.status(404);
+    throw new Error("Category Not Found");
+  }
+  const { CaratType, CategoryName, SubCategoryName, Quantity } =
+    category;
+  const productWithCategory = {
+    ...product.toJSON(),
+    CaratType, CategoryName, SubCategoryName, Quantity,
+  };
+
+  res.status(200).json(productWithCategory);
 });
 
 module.exports = {

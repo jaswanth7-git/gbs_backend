@@ -2,20 +2,27 @@ const db = require("../models");
 const asyncHandler = require("express-async-handler");
 const _ = require("lodash");
 const {
-  getCustomerBasedOnPhone,
   getCustomerByCustomerID,
+  getCustomerByPhoneNumber,
 } = require("./customerController");
 const Advance = db.advance;
 
 //POST
 const addAdvanceAmount = asyncHandler(async (req, res) => {
+  const phoneNumber = req.params.phone ? req.params.phone : null;
+  if (phoneNumber == null) {
+    res.status(400);
+    throw new Error("PhoneNumber is mandatory!");
+  }  
   const { Amount,AdvanceDesc } = req.body;
   if (Amount === undefined || Amount.trim() === "" || AdvanceDesc === undefined || AdvanceDesc.trim() == "") {
     res.status(400);
     throw new Error("Amount is mandatory, Check the request Body");
   }
+
   const formattedDate = prepareCurrentDate();
-  const customer = await getCustomerBasedOnPhone(req, res);
+  const customer = await getCustomerByPhoneNumber(phoneNumber, res);
+
   const advanceBean = {
     Amount: Amount,
     AdvanceDesc: AdvanceDesc,
@@ -25,6 +32,7 @@ const addAdvanceAmount = asyncHandler(async (req, res) => {
   };
 
   const savedAdvance = await Advance.create(advanceBean);
+
   res.status(201).json(savedAdvance);
 });
 
@@ -37,7 +45,12 @@ function prepareCurrentDate() {
 
 //GET
 const getAdvanceAmountByCustomerNumber = asyncHandler(async (req, res) => {
-  const customer = await getCustomerBasedOnPhone(req, res);
+  const phoneNumber = req.params.phone ? req.params.phone : null;
+  if (phoneNumber == null) {
+    res.status(400);
+    throw new Error("PhoneNumber is mandatory!");
+  } 
+  const customer = await getCustomerByPhoneNumber(phoneNumber, res);
   const combinedData = await getAdvancesOfCustomer(customer, res);
   res.status(200).json(combinedData);
 });
