@@ -51,8 +51,7 @@ const addCustomer = asyncHandler(async (req, res) => {
   const customer = await Customer.create(customerBean);
   res.status(200).json(customer);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -72,8 +71,7 @@ const getCustomerByName = asyncHandler(async (req, res) => {
   }
   res.status(200).json(customer);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -87,8 +85,7 @@ const getCustomerByPhone = asyncHandler(async (req, res) => {
   const customer = await getCustomerByPhoneNumber(phoneNumber, res);
   res.status(200).json(customer);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -101,8 +98,7 @@ const getAll = asyncHandler(async (req, res) => {
   }
   res.status(200).json(customers);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -131,8 +127,7 @@ const updateCustomer = asyncHandler(async (req, res) => {
   }
   res.status(200).json(updatedCustomer);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -153,8 +148,7 @@ const deleteCustomer = asyncHandler(async (req, res) => {
   await Customer.destroy({ where: condition });
   res.status(200).json({ message: "Deleted Successfully" });
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -171,8 +165,7 @@ const getCustomerBasedOnID = asyncHandler(async (req, res) => {
 const customer = await getCustomerByCustomerID(customerID)
   res.status(200).json(customer);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -190,8 +183,7 @@ async function getCustomerByPhoneNumber(phoneNumber, res) {
   }
   return customer;
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 }
 

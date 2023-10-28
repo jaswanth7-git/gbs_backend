@@ -42,8 +42,7 @@ const addSchemes = asyncHandler(async (req, res) => {
   }
   res.status(201).json(schemeForCustomers);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -59,8 +58,7 @@ const getAllSchemes = asyncHandler(async (req, res) => {
   }
   res.status(200).json(schemes);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -83,8 +81,7 @@ const getSchemeByNumber = asyncHandler(async (req, res) => {
   }
   res.status(200).json(scheme);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 

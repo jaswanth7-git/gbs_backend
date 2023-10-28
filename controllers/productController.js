@@ -48,8 +48,7 @@ const getProducts = asyncHandler(async (req, res) => {
 
   res.status(200).json(products);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -67,8 +66,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
   }
   res.status(200).json(products);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -114,6 +112,7 @@ const addProduct = asyncHandler(async (req, res) => {
     V_A,
     Stone_Type,
     Stone_Pieces_CTS,
+    Stone_Pieces,
     Stones_RsPs,
     Discount_RsPs,
     Amount_RsPs,
@@ -137,6 +136,7 @@ const addProduct = asyncHandler(async (req, res) => {
     V_A === undefined ||
     Stone_Type === undefined ||
     Stone_Pieces_CTS === undefined ||
+    Stone_Pieces === undefined ||
     Stones_RsPs === undefined ||
     Discount_RsPs === undefined ||
     Amount_RsPs === undefined ||
@@ -157,6 +157,7 @@ const addProduct = asyncHandler(async (req, res) => {
     V_A.trim() === "" ||
     Stone_Type.trim() === "" ||
     Stone_Pieces_CTS.trim() === "" ||
+    Stone_Pieces.trim() === "" ||
     Stones_RsPs.trim() === "" ||
     Discount_RsPs.trim() === "" ||
     Amount_RsPs.trim() === "" ||
@@ -183,6 +184,7 @@ const addProduct = asyncHandler(async (req, res) => {
     V_A: V_A,
     Stone_Type: Stone_Type,
     Stone_Pieces_CTS: Stone_Pieces_CTS,
+    Stone_Pieces: Stone_Pieces,
     Stones_RsPs: Stones_RsPs,
     Discount_RsPs: Discount_RsPs,
     Amount_RsPs: Amount_RsPs,
@@ -202,8 +204,7 @@ const addProduct = asyncHandler(async (req, res) => {
     const product = await Product.create(productBean);
     res.status(201).json(product);
   } catch (error) {
-    res.status(500);
-    throw new Error("Barcode, HSN, HUID should be unique");
+    throw error;
   }
 });
 
@@ -244,8 +245,7 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
   res.status(200).json(updatedProduct);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -275,8 +275,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
   await Product.update({ ActiveStatus: 0 }, { where: condition });
   res.status(200).json({ message: "Successfully Deleted" });
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -302,7 +301,7 @@ const getProductByBarcode = asyncHandler(async (req, res) => {
     : null;
   if (condition == null) {
     res.status(400);
-    throw new Error("Please Mention Correct HSNCode");
+    throw new Error("Please Mention BarCode");
   }
   const product = await Product.findOne({ where: condition });
   if (product == null) {
@@ -323,8 +322,7 @@ const getProductByBarcode = asyncHandler(async (req, res) => {
 
   res.status(200).json(productWithCategory);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 

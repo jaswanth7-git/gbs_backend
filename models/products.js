@@ -52,6 +52,9 @@ module.exports = (sequelize, DataTypes) => {
     Stone_Pieces_CTS: {
       type: DataTypes.STRING(255),
     },
+    Stone_Pieces: {
+      type: DataTypes.STRING(255),
+    },
     Stones_RsPs: {
       type: DataTypes.STRING(255),
     },

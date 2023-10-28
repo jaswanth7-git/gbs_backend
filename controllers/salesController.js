@@ -16,8 +16,7 @@ const addSales = asyncHandler(async (req, res) => {
   const sales = await Sales.create(salesBean);
   res.status(201).json(sales);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -44,6 +43,7 @@ function checkRequestBodyAndPrepareBean(req, res) {
     V_A,
     Stone_Type,
     Stone_Pieces_CTS,
+    Stone_Pieces,
     Stones_RsPs,
     Discount_RsPs,
     Amount_RsPs,
@@ -92,6 +92,8 @@ function checkRequestBodyAndPrepareBean(req, res) {
     Stone_Type.trim() === "" ||
     Stone_Pieces_CTS === undefined ||
     Stone_Pieces_CTS.trim() === "" ||
+    Stone_Pieces === undefined ||
+    Stone_Pieces.trim() === "" ||
     Stones_RsPs === undefined ||
     Stones_RsPs.trim() === "" ||
     Discount_RsPs === undefined ||
@@ -125,6 +127,7 @@ function checkRequestBodyAndPrepareBean(req, res) {
     V_A: V_A,
     Stone_Type: Stone_Type,
     Stone_Pieces_CTS: Stone_Pieces_CTS,
+    Stone_Pieces: Stone_Pieces,
     Stones_RsPs: Stones_RsPs,
     Discount_RsPs: Discount_RsPs,
     Amount_RsPs: Amount_RsPs,
@@ -142,8 +145,7 @@ const getAllSalesData = asyncHandler(async (req, res) => {
 
   res.status(200).json(salesData);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -164,8 +166,7 @@ const getSalesDataByHUID = asyncHandler(async (req, res) => {
 
   res.status(200).json(sales);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -188,8 +189,7 @@ const getSalesBySalesID = asyncHandler(async (req, res) => {
   }
   res.status(200).json(sales);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 

@@ -37,8 +37,7 @@ const addAdvanceAmount = asyncHandler(async (req, res) => {
   res.status(201).json(savedAdvance);
 
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -61,8 +60,7 @@ const getAdvanceAmountByCustomerNumber = asyncHandler(async (req, res) => {
   const combinedData = await getAdvancesOfCustomer(customer, res);
   res.status(200).json(combinedData);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -77,8 +75,7 @@ const getAllAdvanceAmounts = asyncHandler(async (req, res) => {
   const resultArray = await getResultSet(advancesOfCustomers, res);
   res.status(200).json(advancesOfCustomers);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -114,8 +111,7 @@ const updateAdvanceAmount = asyncHandler(async (req, res) => {
 
   res.status(200).json({message : "Updated Successfully"})
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 

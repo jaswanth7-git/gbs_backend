@@ -27,8 +27,7 @@ const addUser = asyncHandler(async (req, res) => {
   const user = await User.create(userBean);
   res.status(201).json(user);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -53,8 +52,7 @@ const getUserByBranch = asyncHandler(async (req, res,next) => {
   }
   res.status(200).json({status : "SUCCESS", Role : user.Role});
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 

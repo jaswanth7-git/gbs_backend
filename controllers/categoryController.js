@@ -30,8 +30,7 @@ const addCategory = asyncHandler(async (req, res, next) => {
   const category = await Category.create(categoryBean);
   res.status(201).json(category);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -44,8 +43,7 @@ const getAllCategories = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json(categories);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -73,8 +71,7 @@ const getCategory = asyncHandler(async (req, res, next) => {
   }
   res.status(200).json(category);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -109,8 +106,7 @@ const updateCategory = asyncHandler(async (req, res) => {
   }
   res.status(200).json(updatedCategory);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -140,8 +136,7 @@ const deleteCategory = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: "Successfully Deleted" });
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -150,8 +145,7 @@ const deleteAll = asyncHandler(async (req, res, next) => {
   await Category.destroy({ where: {} });
   res.status(200).json({ message: "Table truncated successfully." });
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -161,8 +155,7 @@ const ID = req.params.CategoryID;
   const category = await getCategoryBasedOnID(ID, res);
 res.status(200).json(category);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -180,8 +173,7 @@ async function getCategoryBasedOnID(ID, res) {
   }
   return category;
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 }
 

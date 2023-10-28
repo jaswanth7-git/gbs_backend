@@ -28,8 +28,7 @@ const addCustomizedOrder = asyncHandler(async (req, res) => {
 
   res.status(201).json(customizedOrder);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -49,8 +48,7 @@ const getCustomizedOrder = asyncHandler(async (req, res) => {
   }
   res.status(200).json(orders);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -64,8 +62,7 @@ const getAllOrders = asyncHandler(async (req, res) => {
   }
   res.status(200).json(orders);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -85,8 +82,7 @@ const getOrderByModelNumber = asyncHandler(async (req, res) => {
   }
   res.status(200).json(orders);
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
@@ -107,8 +103,7 @@ const deleteByModelNumber = asyncHandler(async (req, res) => {
   await CustomizedOrders.destroy({ where: condition });
   res.status(200).json({ message: "Deleted Successfully" });
 } catch (error) {
-  res.status(500);
-  throw new Error("Internal Server Error");
+  throw error;
 }
 });
 
