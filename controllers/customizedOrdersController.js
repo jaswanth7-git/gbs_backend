@@ -6,24 +6,39 @@ const CustomizedOrders = db.customizedOrders;
 //POST
 const addCustomizedOrder = asyncHandler(async (req, res) => {
   try {
-  const { DeliveryDate, ItemName, ModelNumber } = req.body;
+  const { DeliveryDate, ItemName, ModelNumber, Weight, Making_Charge, Wastage, Gram_Rate, Advance_Amount } = req.body;
   if (
     DeliveryDate === undefined ||
     DeliveryDate.trim() === "" ||
     ItemName === undefined ||
     ItemName.trim() === "" ||
     ModelNumber === undefined ||
-    ModelNumber.trim() === ""
+    ModelNumber.trim() === "" ||
+    Weight === undefined ||
+    Weight.trim() === "" ||    
+    Making_Charge === undefined ||
+    Making_Charge.trim() === "" ||
+    Wastage === undefined ||
+    Wastage.trim() === "" ||
+    Gram_Rate === undefined ||
+    Gram_Rate.trim() === "" ||
+    Advance_Amount === undefined ||
+    Advance_Amount.trim() === ""
   ) {
     res.status(400);
     throw new Error(
-      "DeliveryDate,ItemName,ModelNumber is mandatory, Check the request Body"
+      "DeliveryDate, ItemName, ModelNumber, Weight, Making_Charge, Wastage, Gram_Rate, Advance_Amount are mandatory, Check the request Body"
     );
   }
   const customizedOrder = await CustomizedOrders.create({
     DeliveryDate,
     ItemName,
     ModelNumber,
+    Weight, 
+    Making_Charge, 
+    Wastage, 
+    Gram_Rate, 
+    Advance_Amount
   });
 
   res.status(201).json(customizedOrder);

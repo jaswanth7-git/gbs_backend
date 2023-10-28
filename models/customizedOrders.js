@@ -11,6 +11,21 @@ module.exports = (sequelize, DataTypes) => {
       ItemName: {
         type: DataTypes.STRING(255),
       },
+      Weight: {
+        type: DataTypes.STRING(255),
+      },
+      Making_Charge: {
+        type: DataTypes.STRING(255),
+      },
+      Wastage: {
+        type: DataTypes.STRING(255),
+      },
+      Gram_Rate: {
+        type: DataTypes.STRING(255),
+      },
+      Advance_Amount: {
+        type: DataTypes.STRING(255),
+      },
       ModelNumber: {
         type: DataTypes.STRING(255),
       },
