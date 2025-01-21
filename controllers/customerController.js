@@ -89,6 +89,20 @@ const getCustomerByPhone = asyncHandler(async (req, res) => {
 }
 });
 
+const getCustomerById = asyncHandler(async (req, res) => {
+  try {
+  const cust_id = req.params.CustomerID ? req.params.CustomerID : null;
+  if (cust_id == null) {
+    res.status(400);
+    throw new Error("PhoneNumber is mandatory!");
+  }
+  const customer = await getCustomerByCustomerID(cust_id, res);
+  res.status(200).json(customer);
+} catch (error) {
+  throw error;
+}
+});
+
 const getAll = asyncHandler(async (req, res) => {
   try {
   const customers = await Customer.findAll();
