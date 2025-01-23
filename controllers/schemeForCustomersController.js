@@ -1,7 +1,7 @@
 const db = require("../models");
 const asyncHandler = require("express-async-handler");
 const _ = require("lodash");
-const { getCustomerByPhoneNumber } = require("./customerController");
+const { getCustomerByPhoneNumber , getCustomerByCustomerID} = require("./customerController");
 const SchemeForCustomers = db.schemeForCustomers;
 
 /**
@@ -118,15 +118,14 @@ const getTotalSchemeAmountByCustomerId = asyncHandler(async (req, res) => {
   }
 });
 
-
 const addSchemesByCustomerId = asyncHandler(async (req, res) => {
   try {
     const { customerId } = req.params;
     const { SchemeName, SchemeAmount, SchemeDesc } = req.body;
 
     if (!customerId) {
-      res.status(400);
-      throw new Error("CustomerID is mandatory!");
+      res.status(400).json({ error: "CustomerID is mandatory!" });
+      return; // Stop further execution
     }
 
     if (
@@ -137,14 +136,14 @@ const addSchemesByCustomerId = asyncHandler(async (req, res) => {
       !SchemeDesc ||
       SchemeDesc.trim() === ""
     ) {
-      res.status(400);
-      throw new Error("SchemeName, SchemeAmount, and SchemeDesc are mandatory, check the request body.");
+      res.status(400).json({ error: "SchemeName, SchemeAmount, and SchemeDesc are mandatory, check the request body." });
+      return; // Stop further execution
     }
 
     const customer = await getCustomerByCustomerID(customerId, res);
     if (!customer) {
-      res.status(404);
-      throw new Error("Customer not found!");
+      res.status(404).json({ error: "Customer not found!" });
+      return; // Stop further execution
     }
 
     const schemeBean = {
@@ -159,15 +158,19 @@ const addSchemesByCustomerId = asyncHandler(async (req, res) => {
     const schemeForCustomers = await SchemeForCustomers.create(schemeBean);
 
     if (!schemeForCustomers) {
-      res.status(500);
-      throw new Error("Failed to add scheme.");
+      res.status(500).json({ error: "Failed to add scheme." });
+      return; // Stop further execution
     }
 
     res.status(201).json(schemeForCustomers);
   } catch (error) {
-    throw error;
+    console.error(error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "An unexpected error occurred." });
+    }
   }
 });
+
 
 module.exports = {
   addSchemes,
