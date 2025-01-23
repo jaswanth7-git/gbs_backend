@@ -85,8 +85,43 @@ const getSchemeByNumber = asyncHandler(async (req, res) => {
 }
 });
 
+/**
+ * @returns Total Scheme Amount for a CustomerID
+ * @param CustomerID
+ */
+const getTotalSchemeAmountByCustomerId = asyncHandler(async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    if (!customerId) {
+      res.status(400);
+      throw new Error("CustomerID is mandatory!");
+    }
+
+    const totalAmountResult = await SchemeForCustomers.findAll({
+      attributes: [
+        [db.sequelize.fn("SUM", db.sequelize.cast(db.sequelize.col("SchemeAmount"), "DECIMAL")), "totalAmount"],
+      ],
+      where: {
+        CustomerID: customerId,
+      },
+    });
+
+    const totalAmount = totalAmountResult[0]?.get("totalAmount") || 0;
+
+    res.status(200).json({
+      customerId,
+      totalAmount,
+    });
+  } catch (error) {
+    throw error;
+  }
+});
+
+
 module.exports = {
   addSchemes,
   getAllSchemes,
   getSchemeByNumber,
+  getTotalSchemeAmountByCustomerId
 };
