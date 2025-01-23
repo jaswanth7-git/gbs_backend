@@ -149,13 +149,6 @@ const updateAdvanceAmount = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = {
-  addAdvanceAmount,
-  getAdvanceAmountByCustomerNumber,
-  getAllAdvanceAmounts,
-  getTotalAdvanceAmountByCustomerId, // Added the new endpoint
-  updateAdvanceAmount,
-};
 
 async function getResultSet(advancesOfCustomers, res) {
   const uniqueCustomerIDs = new Set();
@@ -172,6 +165,52 @@ async function getResultSet(advancesOfCustomers, res) {
   return resultArray;
 }
 
+// POST Add Advance Amount by CustomerID
+const addAdvanceAmountByCustomerId = asyncHandler(async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { Amount, AdvanceDesc } = req.body;
+
+    if (!customerId) {
+      res.status(400);
+      throw new Error("CustomerID is mandatory!");
+    }
+
+    if (
+      Amount === undefined ||
+      Amount.trim() === "" ||
+      AdvanceDesc === undefined ||
+      AdvanceDesc.trim() === ""
+    ) {
+      res.status(400);
+      throw new Error("Amount and AdvanceDesc are mandatory, Check the request Body");
+    }
+
+    const customer = await getCustomerByCustomerID(customerId);
+    if (!customer) {
+      res.status(404);
+      throw new Error("Customer not found!");
+    }
+
+    const formattedDate = prepareCurrentDate();
+
+    const advanceBean = {
+      Amount,
+      AdvanceDesc,
+      Date: formattedDate,
+      CustomerID: customer.CustomerID,
+      CustomerName: customer.CustomerName,
+    };
+
+    const savedAdvance = await Advance.create(advanceBean);
+
+    res.status(201).json(savedAdvance);
+  } catch (error) {
+    throw error;
+  }
+});
+
+
 async function getAdvancesOfCustomer(customer, res) {
   const condition = { CustomerID: customer.CustomerID };
   const existingAdvanceData = await Advance.findAll({ where: condition });
@@ -181,3 +220,12 @@ async function getAdvancesOfCustomer(customer, res) {
   }
   return existingAdvanceData;
 }
+
+module.exports = {
+  addAdvanceAmount,
+  getAdvanceAmountByCustomerNumber,
+  getAllAdvanceAmounts,
+  getTotalAdvanceAmountByCustomerId, // Added the new endpoint
+  updateAdvanceAmount,
+  addAdvanceAmountByCustomerId
+};
