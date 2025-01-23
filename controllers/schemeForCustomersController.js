@@ -119,9 +119,60 @@ const getTotalSchemeAmountByCustomerId = asyncHandler(async (req, res) => {
 });
 
 
+const addSchemesByCustomerId = asyncHandler(async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { SchemeName, SchemeAmount, SchemeDesc } = req.body;
+
+    if (!customerId) {
+      res.status(400);
+      throw new Error("CustomerID is mandatory!");
+    }
+
+    if (
+      !SchemeName ||
+      SchemeName.trim() === "" ||
+      !SchemeAmount ||
+      SchemeAmount.trim() === "" ||
+      !SchemeDesc ||
+      SchemeDesc.trim() === ""
+    ) {
+      res.status(400);
+      throw new Error("SchemeName, SchemeAmount, and SchemeDesc are mandatory, check the request body.");
+    }
+
+    const customer = await getCustomerByCustomerID(customerId, res);
+    if (!customer) {
+      res.status(404);
+      throw new Error("Customer not found!");
+    }
+
+    const schemeBean = {
+      SchemeName,
+      SchemeAmount,
+      SchemeDesc,
+      CustomerID: customerId,
+      CustomerName: customer.CustomerName,
+      MobileNumber: customer.MobileNumber,
+    };
+
+    const schemeForCustomers = await SchemeForCustomers.create(schemeBean);
+
+    if (!schemeForCustomers) {
+      res.status(500);
+      throw new Error("Failed to add scheme.");
+    }
+
+    res.status(201).json(schemeForCustomers);
+  } catch (error) {
+    throw error;
+  }
+});
+
 module.exports = {
   addSchemes,
   getAllSchemes,
   getSchemeByNumber,
-  getTotalSchemeAmountByCustomerId
+  getTotalSchemeAmountByCustomerId,
+  addSchemesByCustomerId
 };

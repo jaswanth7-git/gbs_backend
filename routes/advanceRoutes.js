@@ -9,6 +9,7 @@ const {
 
 const router = require("express").Router();
 
+router.route("/total/:customerId").get(getTotalAdvanceAmountByCustomerId);
 router.route("/phone/:phone").post(addAdvanceAmount);
 router.route("/phone/:phone").get(getAdvanceAmountByCustomerNumber); 
 router.route("/customer/:customerId").post(addAdvanceAmountByCustomerId);
