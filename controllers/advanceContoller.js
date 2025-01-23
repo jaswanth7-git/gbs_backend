@@ -7,38 +7,42 @@ const {
 } = require("./customerController");
 const Advance = db.advance;
 
-//POST
+// POST
 const addAdvanceAmount = asyncHandler(async (req, res) => {
-  try{
-  const phoneNumber = req.params.phone ? req.params.phone : null;
-  if (phoneNumber == null) {
-    res.status(400);
-    throw new Error("PhoneNumber is mandatory!");
-  }  
-  const { Amount,AdvanceDesc } = req.body;
-  if (Amount === undefined || Amount.trim() === "" || AdvanceDesc === undefined || AdvanceDesc.trim() == "") {
-    res.status(400);
-    throw new Error("Amount is mandatory, Check the request Body");
+  try {
+    const phoneNumber = req.params.phone ? req.params.phone : null;
+    if (phoneNumber == null) {
+      res.status(400);
+      throw new Error("PhoneNumber is mandatory!");
+    }
+    const { Amount, AdvanceDesc } = req.body;
+    if (
+      Amount === undefined ||
+      Amount.trim() === "" ||
+      AdvanceDesc === undefined ||
+      AdvanceDesc.trim() == ""
+    ) {
+      res.status(400);
+      throw new Error("Amount is mandatory, Check the request Body");
+    }
+
+    const formattedDate = prepareCurrentDate();
+    const customer = await getCustomerByPhoneNumber(phoneNumber, res);
+
+    const advanceBean = {
+      Amount: Amount,
+      AdvanceDesc: AdvanceDesc,
+      Date: formattedDate,
+      CustomerID: customer.CustomerID,
+      CustomerName: customer.CustomerName,
+    };
+
+    const savedAdvance = await Advance.create(advanceBean);
+
+    res.status(201).json(savedAdvance);
+  } catch (error) {
+    throw error;
   }
-
-  const formattedDate = prepareCurrentDate();
-  const customer = await getCustomerByPhoneNumber(phoneNumber, res);
-
-  const advanceBean = {
-    Amount: Amount,
-    AdvanceDesc: AdvanceDesc,
-    Date: formattedDate,
-    CustomerID: customer.CustomerID,
-    CustomerName : customer.CustomerName
-  };
-
-  const savedAdvance = await Advance.create(advanceBean);
-
-  res.status(201).json(savedAdvance);
-
-} catch (error) {
-  throw error;
-}
 });
 
 function prepareCurrentDate() {
@@ -48,78 +52,109 @@ function prepareCurrentDate() {
   return formattedDate;
 }
 
-//GET
+// GET
 const getAdvanceAmountByCustomerNumber = asyncHandler(async (req, res) => {
   try {
-  const phoneNumber = req.params.phone ? req.params.phone : null;
-  if (phoneNumber == null) {
-    res.status(400);
-    throw new Error("PhoneNumber is mandatory!");
-  } 
-  const customer = await getCustomerByPhoneNumber(phoneNumber, res);
-  const combinedData = await getAdvancesOfCustomer(customer, res);
-  res.status(200).json(combinedData);
-} catch (error) {
-  throw error;
-}
+    const phoneNumber = req.params.phone ? req.params.phone : null;
+    if (phoneNumber == null) {
+      res.status(400);
+      throw new Error("PhoneNumber is mandatory!");
+    }
+    const customer = await getCustomerByPhoneNumber(phoneNumber, res);
+    const combinedData = await getAdvancesOfCustomer(customer, res);
+    res.status(200).json(combinedData);
+  } catch (error) {
+    throw error;
+  }
 });
 
-//GET
+// GET
 const getAllAdvanceAmounts = asyncHandler(async (req, res) => {
   try {
-  const advancesOfCustomers = await Advance.findAll();
-  if (_.isEmpty(advancesOfCustomers)) {
-    res.status(404);
-    throw new Error("No Customer Hasn't paid any advances Till Date");
+    const advancesOfCustomers = await Advance.findAll();
+    if (_.isEmpty(advancesOfCustomers)) {
+      res.status(404);
+      throw new Error("No Customer Hasn't paid any advances Till Date");
+    }
+    const resultArray = await getResultSet(advancesOfCustomers, res);
+    res.status(200).json(advancesOfCustomers);
+  } catch (error) {
+    throw error;
   }
-  const resultArray = await getResultSet(advancesOfCustomers, res);
-  res.status(200).json(advancesOfCustomers);
-} catch (error) {
-  throw error;
-}
 });
 
-//PUT
+// GET Total Advance Amount for a CustomerID
+const getTotalAdvanceAmountByCustomerId = asyncHandler(async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    if (!customerId) {
+      res.status(400);
+      throw new Error("CustomerID is mandatory!");
+    }
+
+    const totalAmountResult = await Advance.findAll({
+      attributes: [
+        [db.sequelize.fn("SUM", db.sequelize.cast(db.sequelize.col("Amount"), "DECIMAL")), "totalAmount"],
+      ],
+      where: {
+        CustomerID: customerId,
+      },
+    });
+
+    const totalAmount = totalAmountResult[0]?.get("totalAmount") || 0;
+
+    res.status(200).json({
+      customerId,
+      totalAmount,
+    });
+  } catch (error) {
+    throw error;
+  }
+});
+
+// PUT
 const updateAdvanceAmount = asyncHandler(async (req, res) => {
   try {
-  for (const advID in req.body) {
-    const amount = requestBody[advID];
-    const advance = await Advance.findByPk(existingAdvanceID);
-    if (!advance) {
-      res.status(404);
-      throw new Error("Advance not found");
-    }
-
-    const updatedAmount =
-      parseInt(advance.Amount) - amount < 0
-        ? 0
-        : parseInt(advance.Amount) - amount;
-    const cond = { AdvanceID: advID };
-    const [count, [updatedAdvanceEntry]] = await Advance.update(
-      { Amount: updatedAmount },
-      {
-        where: cond,
-        returning: true, // Set to true to return the updated record
+    for (const advID in req.body) {
+      const amount = requestBody[advID];
+      const advance = await Advance.findByPk(existingAdvanceID);
+      if (!advance) {
+        res.status(404);
+        throw new Error("Advance not found");
       }
-    );
 
-    if (count === 0) {
-      res.status(500);
-      throw new Error("Failed to update customer.");
+      const updatedAmount =
+        parseInt(advance.Amount) - amount < 0
+          ? 0
+          : parseInt(advance.Amount) - amount;
+      const cond = { AdvanceID: advID };
+      const [count, [updatedAdvanceEntry]] = await Advance.update(
+        { Amount: updatedAmount },
+        {
+          where: cond,
+          returning: true, // Set to true to return the updated record
+        }
+      );
+
+      if (count === 0) {
+        res.status(500);
+        throw new Error("Failed to update customer.");
+      }
     }
-  }
 
-  res.status(200).json({message : "Updated Successfully"})
-} catch (error) {
-  throw error;
-}
+    res.status(200).json({ message: "Updated Successfully" });
+  } catch (error) {
+    throw error;
+  }
 });
 
 module.exports = {
   addAdvanceAmount,
   getAdvanceAmountByCustomerNumber,
   getAllAdvanceAmounts,
-  updateAdvanceAmount
+  getTotalAdvanceAmountByCustomerId, // Added the new endpoint
+  updateAdvanceAmount,
 };
 
 async function getResultSet(advancesOfCustomers, res) {
