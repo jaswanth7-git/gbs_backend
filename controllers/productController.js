@@ -55,19 +55,53 @@ const getProducts = asyncHandler(async (req, res) => {
 //@desc get All Products
 //@route GET /api/products/
 //@access private
+// const getAllProducts = asyncHandler(async (req, res) => {
+//   try {
+//   const productCondition = { ActiveStatus: 1 };
+
+//   const products = await Product.findAll({ where: productCondition });
+//   if (_.isEmpty(products)) {
+//     res.status(404);
+//     throw new Error("Product not found");
+//   }
+//   res.status(200).json(products);
+// } catch (error) {
+//   throw error;
+// }
+// });
+
+//@desc get All Products
+//@route GET /api/products/
+//@access private
 const getAllProducts = asyncHandler(async (req, res) => {
   try {
-  const productCondition = { ActiveStatus: 1 };
+    const productCondition = { ActiveStatus: 1 };
+    const products = await Product.findAll({
+      where: productCondition,
+      include: [
+        {
+          model: Category,
+          as: "category", 
+          attributes: ["SubCategoryName"],
+        },
+      ],
+    });
 
-  const products = await Product.findAll({ where: productCondition });
-  if (_.isEmpty(products)) {
-    res.status(404);
-    throw new Error("Product not found");
+    if (_.isEmpty(products)) {
+      res.status(404);
+      throw new Error("Product not found");
+    }
+    const productsWithSubCategory = products.map((product) => {
+      return {
+        ...product.toJSON(),
+        SubCategoryName: product.category ? product.category.SubCategoryName : null,
+      };
+    });
+
+    res.status(200).json(productsWithSubCategory);
+  } catch (error) {
+    throw error;
   }
-  res.status(200).json(products);
-} catch (error) {
-  throw error;
-}
 });
 
 //@desc add products
