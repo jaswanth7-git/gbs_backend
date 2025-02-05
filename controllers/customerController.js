@@ -89,19 +89,6 @@ const getCustomerByPhone = asyncHandler(async (req, res) => {
 }
 });
 
-const getCustomerById = asyncHandler(async (req, res) => {
-  try {
-  const cust_id = req.params.CustomerID ? req.params.CustomerID : null;
-  if (cust_id == null) {
-    res.status(400);
-    throw new Error("PhoneNumber is mandatory!");
-  }
-  const customer = await getCustomerByCustomerID(cust_id, res);
-  res.status(200).json(customer);
-} catch (error) {
-  throw error;
-}
-});
 
 const getAll = asyncHandler(async (req, res) => {
   try {
@@ -176,7 +163,10 @@ const getCustomerBasedOnID = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("CustomerID is mandatory!");
   }
-const customer = await getCustomerByCustomerID(customerID)
+const customer = await Customer.findByPk(customerID);
+if (!customer) {
+  return res.status(404).json({ message: "Customer not found for the given CustomerID" });
+}
   res.status(200).json(customer);
 } catch (error) {
   throw error;
