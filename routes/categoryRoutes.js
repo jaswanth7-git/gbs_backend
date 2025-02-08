@@ -6,7 +6,8 @@ const  {
     getAllCategories,
     addCategory,
     getCategory,
-    getCategoryByID
+    getCategoryByID,
+    getAllSubCategories
 } = require("../controllers/categoryController");
 //for Category
 
@@ -17,4 +18,5 @@ router.route("/truncate").delete(deleteAll);
 router.route("/:category/:SubCategoryName").put(updateCategory);
 router.route("/").get(getAllCategories);
 router.route("/:CategoryID").get(getCategoryByID);
+router.route("/subcategories").post(getAllSubCategories);
 module.exports = router;

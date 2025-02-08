@@ -159,6 +159,23 @@ res.status(200).json(category);
 }
 });
 
+const getAllSubCategories = asyncHandler(async (req, res) => {
+  try {
+    console.log("Anna namaste");
+    const subCategories = await Category.findAll({
+      attributes: ['SubCategoryName'], 
+      group: ['SubCategoryName'],  
+      where: { ActiveStatus: 1 },    
+    });
+    const subCategoryList = subCategories.map(cat => cat.SubCategoryName);
+    if (subCategoryList.length === 0) {
+      return res.status(200).json([]);
+    }
+    res.status(200).json(subCategoryList);
+  } catch (error) {
+    throw error;
+  }
+});
 async function getCategoryBasedOnID(ID, res) {
   try{
   const condition = ID ? { CategoryID: ID } : null;
@@ -185,6 +202,7 @@ module.exports = {
   addCategory,
   getCategory,
   getCategoryBasedOnID,
-  getCategoryByID
+  getCategoryByID,
+  getAllSubCategories
 };
 
