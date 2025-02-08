@@ -5,7 +5,69 @@ const _ = require("lodash");
 
 const addSales = asyncHandler(async (req, res) => {
   try {
-    const salesBean = checkRequestBodyAndPrepareBean(req, res);
+    // List of required fields
+    const requiredFields = [
+      "CustomerName",
+      "Aadhar",
+      "Phone",
+      "Pan_Card",
+      "StateCode",
+      "BarCode",
+      "ItemName_Description",
+      "CategoryName",
+      "SubCategoryName",
+      "HSNCode",
+      "CaratType",
+      "HUID",
+      "TagName",
+      "GrWeight_Grams",
+      "NetWeight_Grams",
+      "Rate_Per_Gram",
+      "Making_Charge",
+      "Wastage_Charge",
+      "V_A",
+      "Stone_Type",
+      "Stone_Pieces_CTS",
+      "Stone_Pieces",
+      "Stones_RsPs",
+      "Discount_RsPs",
+      "Amount_RsPs",
+    ];
+    const missingFields = requiredFields.filter((field) => !req.body[field]?.trim());
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        message: "Missing or empty fields",
+        missingFields: missingFields,
+      });
+    }
+    const salesBean = {
+      CustomerName: req.body.CustomerName,
+      Aadhar: req.body.Aadhar,
+      Phone: req.body.Phone,
+      Pan_Card: req.body.Pan_Card,
+      StateCode: req.body.StateCode,
+      BarCode: req.body.BarCode,
+      ItemName_Description: req.body.ItemName_Description,
+      CategoryName: req.body.CategoryName,
+      SubCategoryName: req.body.SubCategoryName,
+      HSNCode: req.body.HSNCode,
+      CaratType: req.body.CaratType,
+      HUID: req.body.HUID,
+      TagName: req.body.TagName,
+      GrWeight_Grams: req.body.GrWeight_Grams,
+      NetWeight_Grams: req.body.NetWeight_Grams,
+      Rate_Per_Gram: req.body.Rate_Per_Gram,
+      Making_Charge: req.body.Making_Charge,
+      Wastage_Charge: req.body.Wastage_Charge,
+      V_A: req.body.V_A,
+      Stone_Type: req.body.Stone_Type,
+      Stone_Pieces_CTS: req.body.Stone_Pieces_CTS,
+      Stone_Pieces: req.body.Stone_Pieces,
+      Stones_RsPs: req.body.Stones_RsPs,
+      Discount_RsPs: req.body.Discount_RsPs,
+      Amount_RsPs: req.body.Amount_RsPs,
+    };
     const existingSalesEntry = await Sales.findOne({ where: salesBean });
     if (existingSalesEntry) {
       return res.status(409).json({ message: "Sales entry already exists with the same data." });
@@ -17,6 +79,20 @@ const addSales = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 });
+// const addSales = asyncHandler(async (req, res) => {
+//   try {
+//     const salesBean = checkRequestBodyAndPrepareBean(req, res);
+//     const existingSalesEntry = await Sales.findOne({ where: salesBean });
+//     if (existingSalesEntry) {
+//       return res.status(409).json({ message: "Sales entry already exists with the same data." });
+//     }
+//     const sales = await Sales.create(salesBean);
+//     return res.status(201).json(sales);
+//   } catch (error) {
+//     console.error("Error adding sales:", error);
+//     return res.status(500).json({ message: "Internal server error." });
+//   }
+// });
 function checkRequestBodyAndPrepareBean(req, res) {
   const {
     CustomerName,
