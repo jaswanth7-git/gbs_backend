@@ -82,6 +82,12 @@ module.exports = (sequelize, DataTypes) => {
     Amount_RsPs: {
       type: DataTypes.STRING(255),
     },
+    AdvanceAmount: {
+      type: DataTypes.STRING(255),
+    },
+    SchemeAmount: {
+      type: DataTypes.STRING(255),
+    }
   });
   return Sales;
 };

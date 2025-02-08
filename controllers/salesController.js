@@ -67,6 +67,8 @@ const addSales = asyncHandler(async (req, res) => {
       Stones_RsPs: req.body.Stones_RsPs,
       Discount_RsPs: req.body.Discount_RsPs,
       Amount_RsPs: req.body.Amount_RsPs,
+      SchemeAmount : req.body.SchemeAmount,
+      AdvanceAmount : req.body.AdvanceAmount
     };
     const existingSalesEntry = await Sales.findOne({ where: salesBean });
     if (existingSalesEntry) {
@@ -93,120 +95,120 @@ const addSales = asyncHandler(async (req, res) => {
 //     return res.status(500).json({ message: "Internal server error." });
 //   }
 // });
-function checkRequestBodyAndPrepareBean(req, res) {
-  const {
-    CustomerName,
-    Aadhar,
-    Phone,
-    Pan_Card,
-    StateCode,
-    BarCode,
-    ItemName_Description,
-    CategoryName,
-    SubCategoryName,
-    HSNCode,
-    CaratType,
-    HUID,
-    TagName,
-    GrWeight_Grams,
-    NetWeight_Grams,
-    Rate_Per_Gram,
-    Making_Charge,
-    Wastage_Charge,
-    V_A,
-    Stone_Type,
-    Stone_Pieces_CTS,
-    Stone_Pieces,
-    Stones_RsPs,
-    Discount_RsPs,
-    Amount_RsPs,
-  } = req.body;
+// function checkRequestBodyAndPrepareBean(req, res) {
+//   const {
+//     CustomerName,
+//     Aadhar,
+//     Phone,
+//     Pan_Card,
+//     StateCode,
+//     BarCode,
+//     ItemName_Description,
+//     CategoryName,
+//     SubCategoryName,
+//     HSNCode,
+//     CaratType,
+//     HUID,
+//     TagName,
+//     GrWeight_Grams,
+//     NetWeight_Grams,
+//     Rate_Per_Gram,
+//     Making_Charge,
+//     Wastage_Charge,
+//     V_A,
+//     Stone_Type,
+//     Stone_Pieces_CTS,
+//     Stone_Pieces,
+//     Stones_RsPs,
+//     Discount_RsPs,
+//     Amount_RsPs,
+//   } = req.body;
 
-  if (
-    CustomerName === undefined ||
-    CustomerName.trim() === "" ||
-    Aadhar === undefined ||
-    Aadhar.trim() === "" ||
-    Phone === undefined ||
-    Phone.trim() === "" ||
-    Pan_Card === undefined ||
-    Pan_Card.trim() === "" ||
-    StateCode === undefined ||
-    StateCode.trim() === "" ||
-    BarCode === undefined ||
-    BarCode.trim() === "" ||
-    ItemName_Description === undefined ||
-    ItemName_Description.trim() === "" ||
-    CategoryName === undefined ||
-    CategoryName.trim() === "" ||
-    SubCategoryName === undefined ||
-    SubCategoryName.trim() === "" ||
-    HSNCode === undefined ||
-    HSNCode.trim() === "" ||
-    CaratType === undefined ||
-    CaratType.trim() === "" ||
-    HUID === undefined ||
-    HUID.trim() === "" ||
-    TagName === undefined ||
-    TagName.trim() === "" ||
-    GrWeight_Grams === undefined ||
-    GrWeight_Grams.trim() === "" ||
-    NetWeight_Grams === undefined ||
-    NetWeight_Grams.trim() === "" ||
-    Rate_Per_Gram === undefined ||
-    Rate_Per_Gram.trim() === "" ||
-    Making_Charge === undefined ||
-    Making_Charge.trim() === "" ||
-    Wastage_Charge === undefined ||
-    Wastage_Charge.trim() === "" ||
-    V_A === undefined ||
-    V_A.trim() === "" ||
-    Stone_Type === undefined ||
-    Stone_Type.trim() === "" ||
-    Stone_Pieces_CTS === undefined ||
-    Stone_Pieces_CTS.trim() === "" ||
-    Stone_Pieces === undefined ||
-    Stone_Pieces.trim() === "" ||
-    Stones_RsPs === undefined ||
-    Stones_RsPs.trim() === "" ||
-    Discount_RsPs === undefined ||
-    Discount_RsPs.trim() === "" ||
-    Amount_RsPs === undefined ||
-    Amount_RsPs.trim() === ""
-  ) {
-    res.status(400);
-    throw new Error("All fields are mandatory!");
-  }
+//   if (
+//     CustomerName === undefined ||
+//     CustomerName.trim() === "" ||
+//     Aadhar === undefined ||
+//     Aadhar.trim() === "" ||
+//     Phone === undefined ||
+//     Phone.trim() === "" ||
+//     Pan_Card === undefined ||
+//     Pan_Card.trim() === "" ||
+//     StateCode === undefined ||
+//     StateCode.trim() === "" ||
+//     BarCode === undefined ||
+//     BarCode.trim() === "" ||
+//     ItemName_Description === undefined ||
+//     ItemName_Description.trim() === "" ||
+//     CategoryName === undefined ||
+//     CategoryName.trim() === "" ||
+//     SubCategoryName === undefined ||
+//     SubCategoryName.trim() === "" ||
+//     HSNCode === undefined ||
+//     HSNCode.trim() === "" ||
+//     CaratType === undefined ||
+//     CaratType.trim() === "" ||
+//     HUID === undefined ||
+//     HUID.trim() === "" ||
+//     TagName === undefined ||
+//     TagName.trim() === "" ||
+//     GrWeight_Grams === undefined ||
+//     GrWeight_Grams.trim() === "" ||
+//     NetWeight_Grams === undefined ||
+//     NetWeight_Grams.trim() === "" ||
+//     Rate_Per_Gram === undefined ||
+//     Rate_Per_Gram.trim() === "" ||
+//     Making_Charge === undefined ||
+//     Making_Charge.trim() === "" ||
+//     Wastage_Charge === undefined ||
+//     Wastage_Charge.trim() === "" ||
+//     V_A === undefined ||
+//     V_A.trim() === "" ||
+//     Stone_Type === undefined ||
+//     Stone_Type.trim() === "" ||
+//     Stone_Pieces_CTS === undefined ||
+//     Stone_Pieces_CTS.trim() === "" ||
+//     Stone_Pieces === undefined ||
+//     Stone_Pieces.trim() === "" ||
+//     Stones_RsPs === undefined ||
+//     Stones_RsPs.trim() === "" ||
+//     Discount_RsPs === undefined ||
+//     Discount_RsPs.trim() === "" ||
+//     Amount_RsPs === undefined ||
+//     Amount_RsPs.trim() === ""
+//   ) {
+//     res.status(400);
+//     throw new Error("All fields are mandatory!");
+//   }
 
-  const salesBean = {
-    CustomerName: CustomerName,
-    Aadhar: Aadhar,
-    Phone: Phone,
-    Pan_Card: Pan_Card,
-    StateCode: StateCode,
-    BarCode: BarCode,
-    ItemName_Description: ItemName_Description,
-    CategoryName: CategoryName,
-    SubCategoryName: SubCategoryName,
-    HSNCode: HSNCode,
-    CaratType: CaratType,
-    HUID: HUID,
-    TagName: TagName,
-    GrWeight_Grams: GrWeight_Grams,
-    NetWeight_Grams: NetWeight_Grams,
-    Rate_Per_Gram: Rate_Per_Gram,
-    Making_Charge: Making_Charge,
-    Wastage_Charge: Wastage_Charge,
-    V_A: V_A,
-    Stone_Type: Stone_Type,
-    Stone_Pieces_CTS: Stone_Pieces_CTS,
-    Stone_Pieces: Stone_Pieces,
-    Stones_RsPs: Stones_RsPs,
-    Discount_RsPs: Discount_RsPs,
-    Amount_RsPs: Amount_RsPs,
-  };
-  return salesBean;
-}
+//   const salesBean = {
+//     CustomerName: CustomerName,
+//     Aadhar: Aadhar,
+//     Phone: Phone,
+//     Pan_Card: Pan_Card,
+//     StateCode: StateCode,
+//     BarCode: BarCode,
+//     ItemName_Description: ItemName_Description,
+//     CategoryName: CategoryName,
+//     SubCategoryName: SubCategoryName,
+//     HSNCode: HSNCode,
+//     CaratType: CaratType,
+//     HUID: HUID,
+//     TagName: TagName,
+//     GrWeight_Grams: GrWeight_Grams,
+//     NetWeight_Grams: NetWeight_Grams,
+//     Rate_Per_Gram: Rate_Per_Gram,
+//     Making_Charge: Making_Charge,
+//     Wastage_Charge: Wastage_Charge,
+//     V_A: V_A,
+//     Stone_Type: Stone_Type,
+//     Stone_Pieces_CTS: Stone_Pieces_CTS,
+//     Stone_Pieces: Stone_Pieces,
+//     Stones_RsPs: Stones_RsPs,
+//     Discount_RsPs: Discount_RsPs,
+//     Amount_RsPs: Amount_RsPs,
+//   };
+//   return salesBean;
+// }
 
 const getAllSalesData = asyncHandler(async (req, res) => {
   try {
