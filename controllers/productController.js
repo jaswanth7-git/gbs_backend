@@ -108,143 +108,73 @@ const getAllProducts = asyncHandler(async (req, res) => {
 //@route POST /api/products/:category
 //@access private
 const addProduct = asyncHandler(async (req, res) => {
-  try{
-  const categoryName = req.params.category;
-  const branch = req.body.Branch;
-  const SubCategoryName = req.params.SubCategoryName;
-  const condition =
-    categoryName && SubCategoryName && branch
-      ? {
-          CategoryName: categoryName,
-          ActiveStatus: 1,
-          SubCategoryName: SubCategoryName,
-          Branch: branch,
-        }
-      : null;
-  if (condition === null) {
-    res.status(404);
-    throw new Error("Category cannot be null or Empty");
-  }
-  const category = await Category.findOne({ where: condition });
-  if (category === null) {
-    res.status(404);
-    throw new Error("Category not Found in the Given Branch");
-  }
-  const {
-    ItemName_Description,
-    HSNCode,
-    HUID,
-    TagName,
-    BarCode_Prefix,
-    GrWeight_Grams,
-    NetWeight_Grams,
-    Rate_Per_Gram,
-    Making_Charge,
-    Making_Direct,
-    Wastage_Charge,
-    Wastage_Direct,
-    V_A,
-    Stone_Type,
-    Stone_Pieces_CTS,
-    Stone_Pieces,
-    Stones_RsPs,
-    Discount_RsPs,
-    Amount_RsPs,
-    BarCode,
-    Branch,
-  } = req.body;
+  try {
+    const { categoryName, SubCategoryName, ...productData } = req.body;
+    if (!categoryName || !SubCategoryName ) {
+      return res.status(400).json({ message: "Category, SubCategory are required." });
+    }
+    const category = await Category.findOne({
+      where: {
+        CategoryName: categoryName,
+        SubCategoryName: SubCategoryName,
+        ActiveStatus: 1,
+      },
+    });
 
-  if (
-    ItemName_Description === undefined ||
-    HSNCode === undefined ||
-    HUID === undefined ||
-    TagName === undefined ||
-    BarCode_Prefix === undefined ||
-    GrWeight_Grams === undefined ||
-    NetWeight_Grams === undefined ||
-    Rate_Per_Gram === undefined ||
-    Making_Charge === undefined ||
-    Making_Direct === undefined ||
-    Wastage_Charge === undefined ||
-    Wastage_Direct === undefined ||
-    V_A === undefined ||
-    Stone_Type === undefined ||
-    Stone_Pieces_CTS === undefined ||
-    Stone_Pieces === undefined ||
-    Stones_RsPs === undefined ||
-    Discount_RsPs === undefined ||
-    Amount_RsPs === undefined ||
-    BarCode === undefined ||
-    Branch === undefined ||
-    ItemName_Description.trim() === "" ||
-    HSNCode.trim() === "" ||
-    HUID.trim() === "" ||
-    TagName.trim() === "" ||
-    BarCode_Prefix.trim() === "" ||
-    GrWeight_Grams.trim() === "" ||
-    NetWeight_Grams.trim() === "" ||
-    Rate_Per_Gram.trim() === "" ||
-    Making_Charge.trim() === "" ||
-    Making_Direct.trim() === "" ||
-    Wastage_Charge.trim() === "" ||
-    Wastage_Direct.trim() === "" ||
-    V_A.trim() === "" ||
-    Stone_Type.trim() === "" ||
-    Stone_Pieces_CTS.trim() === "" ||
-    Stone_Pieces.trim() === "" ||
-    Stones_RsPs.trim() === "" ||
-    Discount_RsPs.trim() === "" ||
-    Amount_RsPs.trim() === "" ||
-    BarCode.trim() === "" ||
-    Branch.trim() === ""
-  ) {
-    res.status(400);
-    throw new Error("All fields are mandatory!");
-  }
+    if (!category) {
+      return res.status(404).json({ message: "Category not found in the given branch." });
+    }
 
-  const productBean = {
-    ItemName_Description: ItemName_Description,
-    HSNCode: HSNCode,
-    HUID: HUID,
-    TagName: TagName,
-    BarCode_Prefix: BarCode_Prefix,
-    GrWeight_Grams: GrWeight_Grams,
-    NetWeight_Grams: NetWeight_Grams,
-    Rate_Per_Gram: Rate_Per_Gram,
-    Making_Charge: Making_Charge,
-    Making_Direct: Making_Direct,
-    Wastage_Charge: Wastage_Charge,
-    Wastage_Direct: Wastage_Direct,
-    V_A: V_A,
-    Stone_Type: Stone_Type,
-    Stone_Pieces_CTS: Stone_Pieces_CTS,
-    Stone_Pieces: Stone_Pieces,
-    Stones_RsPs: Stones_RsPs,
-    Discount_RsPs: Discount_RsPs,
-    Amount_RsPs: Amount_RsPs,
-    BarCode: BarCode,
-    Branch: Branch,
-    ActiveStatus: 1,
-    CategoryID: category.CategoryID,
-  };
+    // Validate product data
+    const requiredFields = [
+      "ItemName_Description",
+      "HSNCode",
+      "HUID",
+      "TagName",
+      "BarCode_Prefix",
+      "GrWeight_Grams",
+      "NetWeight_Grams",
+      "Rate_Per_Gram",
+      "Making_Charge",
+      "Making_Direct",
+      "Wastage_Charge",
+      "Wastage_Direct",
+      "V_A",
+      "Stone_Type",
+      "Stone_Pieces_CTS",
+      "Stone_Pieces",
+      "Stones_RsPs",
+      "Discount_RsPs",
+      "Amount_RsPs",
+      "BarCode",
+      "Branch",
+    ];
 
-  const existingProduct = await Product.findOne({
-    where: { BarCode: BarCode, HSNCode: HSNCode, HUID: HUID },
-  });
-  if (existingProduct) {
-    res.status(406);
-    throw new Error("Already Exists with the same HSNCode");
-  }
-    const product = await Product.create(productBean);
-    res.status(201).json(product);
+    for (const field of requiredFields) {
+      if (!productData[field]?.trim()) {
+        return res.status(400).json({ message: `Field '${field}' is mandatory.` });
+      }
+    }
+
+    const existingProduct = await Product.findOne({
+      where: { BarCode: productData.BarCode, HSNCode: productData.HSNCode, HUID: productData.HUID },
+    });
+
+    if (existingProduct) {
+      return res.status(409).json({ message: "Product already exists with the same HSNCode, BarCode, or HUID." });
+    }
+    const product = await Product.create({
+      ...productData,
+      ActiveStatus: 1,
+      CategoryID: category.CategoryID, 
+    });
+
+    return res.status(201).json(product);
   } catch (error) {
-    throw error;
+    console.error("Error adding product:", error);
+    return res.status(500).json({ message: "Internal server error." });
   }
 });
-
-//@desc update All Products
-//@route PUT /api/products/:HSNCode
-//@access private
 const updateProduct = asyncHandler(async (req, res) => {
   try {
   const condition =

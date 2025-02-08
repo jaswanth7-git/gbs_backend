@@ -5,21 +5,18 @@ const _ = require("lodash");
 
 const addSales = asyncHandler(async (req, res) => {
   try {
-  const salesBean = checkRequestBodyAndPrepareBean(req, res);
-
-  const existingSalesEntry = await Sales.findOne({ where: salesBean });
-  if (existingSalesEntry != null) {
-    res.status(406);
-    throw new Error("Already Exists with same Data Try Again ");
+    const salesBean = checkRequestBodyAndPrepareBean(req, res);
+    const existingSalesEntry = await Sales.findOne({ where: salesBean });
+    if (existingSalesEntry) {
+      return res.status(409).json({ message: "Sales entry already exists with the same data." });
+    }
+    const sales = await Sales.create(salesBean);
+    return res.status(201).json(sales);
+  } catch (error) {
+    console.error("Error adding sales:", error);
+    return res.status(500).json({ message: "Internal server error." });
   }
-
-  const sales = await Sales.create(salesBean);
-  res.status(201).json(sales);
-} catch (error) {
-  throw error;
-}
 });
-
 function checkRequestBodyAndPrepareBean(req, res) {
   const {
     CustomerName,
