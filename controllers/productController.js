@@ -146,7 +146,6 @@ const addProduct = asyncHandler(async (req, res) => {
       "Discount_RsPs",
       "Amount_RsPs",
       "BarCode",
-      "Branch",
     ];
 
     for (const field of requiredFields) {
