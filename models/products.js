@@ -10,11 +10,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     HSNCode: {
       type: DataTypes.STRING(255),
-      unique: true, // Enforce uniqueness
     },
     HUID: {
       type: DataTypes.STRING(255),
-      unique: true, // Enforce uniqueness
     },
     TagName: {
       type: DataTypes.STRING(255),

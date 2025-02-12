@@ -128,7 +128,6 @@ const addProduct = asyncHandler(async (req, res) => {
     // Validate product data
     const requiredFields = [
       "ItemName_Description",
-      "HSNCode",
       "HUID",
       "TagName",
       "BarCode_Prefix",
@@ -157,11 +156,11 @@ const addProduct = asyncHandler(async (req, res) => {
     }
 
     const existingProduct = await Product.findOne({
-      where: { BarCode: productData.BarCode, HSNCode: productData.HSNCode, HUID: productData.HUID },
+      where: { BarCode: productData.BarCode},
     });
 
     if (existingProduct) {
-      return res.status(409).json({ message: "Product already exists with the same HSNCode, BarCode, or HUID." });
+      return res.status(409).json({ message: "Product already exists with the same BarCode." });
     }
     const product = await Product.create({
       ...productData,

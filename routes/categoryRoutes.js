@@ -13,7 +13,7 @@ const  {
 
 router.route("/").post(addCategory);
 router.route("/:category/:SubCategoryName").get(getCategory);
-router.route("/delete/:category/:SubCategoryName").put(deleteCategory);
+router.route("/delete/").put(deleteCategory);
 router.route("/truncate").delete(deleteAll);
 router.route("/:category/:SubCategoryName").put(updateCategory);
 router.route("/").get(getAllCategories);

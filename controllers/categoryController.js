@@ -112,8 +112,8 @@ const updateCategory = asyncHandler(async (req, res) => {
 
 const deleteCategory = asyncHandler(async (req, res) => {
   try {
-  const categoryName = req.params.category;
-  const SubCategoryName = req.params.SubCategoryName;
+  const categoryName = req.body.category;
+  const SubCategoryName = req.body.SubCategoryName;
   const condition =
     categoryName && SubCategoryName
       ? {

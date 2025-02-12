@@ -50,7 +50,7 @@ const getUserByBranch = asyncHandler(async (req, res,next) => {
     res.status(404);
     throw new Error("No Entries Found For The Given Branch.");
   }
-  res.status(200).json({status : "SUCCESS", userName: userName, role : user.Role});
+  res.status(200).json({status : "SUCCESS", userName: userName, role : user.Role ,branch : branch});
 } catch (error) {
   throw error;
 }
