@@ -1,13 +1,14 @@
 module.exports = {
-  HOST: "localhost",
-  USER: "root",
-  PASSWORD: "root",
-  DB: "gbs",
-  dialect: "mysql",
+  HOST: "db.suhnmdabpnsggksequno.supabase.co",
+  USER: "postgres",
+  PASSWORD: "2ML5kX5xw1tkeXEk",
+  DB: "GBSDB",
+  dialect: "postgres",
   pool: {
-    max: 5,
+    max: 10,
     min: 0,
     acquire: 30000,
     idle: 10000,
   },
 };
+
