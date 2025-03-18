@@ -10,6 +10,7 @@ var corsOptions = {
 
 };
 
+console.log("inside server.js file")
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
