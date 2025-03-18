@@ -10,6 +10,13 @@ var corsOptions = {
 
 };
 
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
+});
+app.get('/jas', (req, res) => {
+  res.send('jas, World!');
+});
+
 console.log("inside server.js file")
 app.use(cors(corsOptions));
 app.use(express.json());
