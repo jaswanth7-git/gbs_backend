@@ -32,6 +32,12 @@ app.use("/api/schemes", require("./routes/schemeForCustomersRoutes"));
 app.use(errorHandler);
 
 const port = process.env.PORT || 9001;
-app.listen(port, () => {
-  console.log(`Server Running on ${port}`);
-});
+
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Server Running on ${port}`);
+  });
+}
+
+module.exports = app;  // Export app for Vercel
+
