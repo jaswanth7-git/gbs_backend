@@ -1,9 +1,9 @@
 module.exports = {
   HOST: "localhost",
-  USER: "root",
-  PASSWORD: "root",
+  USER: "postgres", // Changed from "root" to default PostgreSQL user
+  PASSWORD: "root", // Keep same password or change as needed
   DB: "gbs",
-  dialect: "mysql",
+  dialect: "postgres", // Changed from "mysql" to "postgres"
   pool: {
     max: 5,
     min: 0,
