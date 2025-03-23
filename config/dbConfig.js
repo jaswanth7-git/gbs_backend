@@ -1,6 +1,5 @@
 module.exports = {
   HOST: "db.suhnmdabpnsggksequno.supabase.co",
-  PORT : "5432",
   USER: "postgres",
   PASSWORD: "2ML5kX5xw1tkeXEk",
   DB: "postgres",
